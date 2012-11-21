@@ -1,0 +1,82 @@
+      
+
+.ui-widget, .ui-widget ui-widget{
+    font-size: 90% !important;
+}
+
+.icon-dashboard{
+    background: url(../resources/images/dashboard.png) no-repeat !important ;
+    height:32px;
+    width:32px;
+    float:none !important;
+    display:block!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+.icon-project{
+    background: url(../resources/images/project.png) no-repeat !important ;
+    height:32px;
+    width:32px;
+    float:none !important;
+    display:block!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+.icon-employee{
+    background: url(../resources/images/user.png) no-repeat !important ;
+    height:32px;
+    width:32px;
+    float:none !important;
+    display:block!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+.icon-client{
+    background: url(../resources/images/client.png) no-repeat !important ;
+    height:32px;
+    width:32px;
+    float:none !important;
+    display:block!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+.icon-parameter{
+    background: url(../resources/images/parameter.png) no-repeat !important ;
+    height:32px;
+    width:32px;
+    float:none !important;
+    display:block!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+
+
+.ui-menuitem-link{
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    width:80px!important;
+}
+
+.ui-menuitem-text{
+    margin-top:8px!important;
+    text-align: center !important;
+    display:block!important;
+}
+
+
+

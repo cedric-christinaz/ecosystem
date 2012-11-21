@@ -1,0 +1,10 @@
+----------------------------------------------------------------
+Thu Nov 15 19:32:25 CET 2012:
+Amor?age de Derby version The Apache Software Foundation - Apache Derby - 10.8.1.2 - (1095077) : instance a816c00e-013b-0557-e9d5-000007a4ac28 
+dans le r?pertoire de base de donn?es /private/var/folders/9s/83gfd34x4t53bshbxhc9dzyr0000gn/T/gfembed9157088357334511746tmp/lib/databases/embedded_default  avec le chargeur de classe sun.misc.Launcher$AppClassLoader@422758d0
+
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_06-b24
+user.dir=/Users/cedric/NetBeansProjects/ecosystem
+derby.system.home=null
+Chargeur de classe de la base de donn?es d?marr? - derby.database.classpath=''
