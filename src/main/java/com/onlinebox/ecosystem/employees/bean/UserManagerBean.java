@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -66,8 +67,30 @@ public class UserManagerBean {
         em.remove(toDelete);
     }
 
+    /**
+     * This method returns all users (both enabled and disabled).
+     * @return List of all users (both enabled and disabled)
+     */
     public java.util.List<User> getAll() {
         Query query = em.createNamedQuery("User.findAll");
+        return query.getResultList();
+    }
+
+    /**
+     * This method returns all users that are enabled.
+     * @return List of all enabled users
+     */
+    public java.util.List<User> getAllActiveUsers() {
+        Query query = em.createNamedQuery("User.findActive");
+        return query.getResultList();
+    }
+    
+     /**
+     * This method returns all users that are enabled.
+     * @return List of all enabled users
+     */
+    public java.util.List<User> getAllDisabledUsers() {
+        Query query = em.createNamedQuery("User.findDisabled");
         return query.getResultList();
     }
 
@@ -78,11 +101,16 @@ public class UserManagerBean {
     public User get(long id) {
         return em.find(User.class, id);
     }
-    
-    public User getByUsername(String username) {
-         Query query = em.createNamedQuery("User.findByUsername");
-         query.setParameter("username", username);
-         return (User) query.getSingleResult();
+
+    public User getByUsername(String username) throws NoResultException  {
+        Query query = em.createNamedQuery("User.findByUsername");
+        query.setParameter("username", username);
+        try{
+            return (User) query.getSingleResult();
+        }
+        catch(NoResultException nre){
+            return new User();
+        }     
     }
 
     /**

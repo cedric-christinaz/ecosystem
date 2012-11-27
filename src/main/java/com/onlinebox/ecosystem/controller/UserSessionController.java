@@ -57,7 +57,7 @@ public class UserSessionController implements Serializable{
     public String logout() {
         ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false)).invalidate();
         user=null;
-        return "index.xhtml?faces-redirect=true";
+        return "dashboard_view.xhtml?faces-redirect=true";
 
     }
 }

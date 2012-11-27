@@ -14,7 +14,7 @@ public class UserJob implements IEntity, Serializable {
     @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
     @javax.persistence.Column(name = "Id", nullable = false, length = 19)
     private long id;
-    @javax.persistence.Column(name = "Name", nullable = false, length = 60)
+    @javax.persistence.Column(name="Name", unique=true, nullable=false, length=60)
     private String name;
 	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
 	@javax.persistence.Column(name="CreateDate", nullable=false)

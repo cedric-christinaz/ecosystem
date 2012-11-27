@@ -6,6 +6,8 @@ import javax.persistence.*;
 
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "select u from User u order by u.lastname, u.firstname"),
+    @NamedQuery(name = "User.findActive", query = "select u from User u WHERE u.isActive = true order by u.lastname, u.firstname"),
+    @NamedQuery(name = "User.findDisabled", query = "select u from User u WHERE u.isActive = false order by u.lastname, u.firstname"),
     @NamedQuery(name = "User.findByUsername", query = "select u from User u WHERE u.username = :username")
 })
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
@@ -45,19 +47,19 @@ public class User implements IEntity, Serializable {
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @javax.persistence.Column(name = "LastLogin")
     private java.util.Date lastLogin;
-    @javax.persistence.Column(name = "PhoneHome", length = 10)
-    private int phoneHome;
-    @javax.persistence.Column(name = "PhoneOffice", length = 10)
-    private int phoneOffice;
-    @javax.persistence.Column(name = "PhoneMobile", length = 10)
-    private int phoneMobile;
+    @javax.persistence.Column(name = "PhoneHome", length = 20)
+    private String phoneHome;
+    @javax.persistence.Column(name = "PhoneOffice", length = 20)
+    private String phoneOffice;
+    @javax.persistence.Column(name = "PhoneMobile", length = 20)
+    private String phoneMobile;
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @javax.persistence.Column(name = "CreateDate", nullable = false)
     private java.util.Date createDate;
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @javax.persistence.Column(name = "LastUpdateDate", nullable = false)
     private java.util.Date lastUpdateDate;
-    @javax.persistence.Column(name = "Username", length = 120)
+    @javax.persistence.Column(name = "Username", unique = true, nullable = false, length = 120)
     private String username;
     @javax.persistence.Column(name = "Password", nullable = false, length = 128)
     private String password;
@@ -173,27 +175,27 @@ public class User implements IEntity, Serializable {
         this.lastLogin = lastLogin;
     }
 
-    public int getPhoneHome() {
+    public String getPhoneHome() {
         return this.phoneHome;
     }
 
-    public void setPhoneHome(int phoneHome) {
+    public void setPhoneHome(String phoneHome) {
         this.phoneHome = phoneHome;
     }
 
-    public int getPhoneOffice() {
+    public String getPhoneOffice() {
         return this.phoneOffice;
     }
 
-    public void setPhoneOffice(int phoneOffice) {
+    public void setPhoneOffice(String phoneOffice) {
         this.phoneOffice = phoneOffice;
     }
 
-    public int getPhoneMobile() {
+    public String getPhoneMobile() {
         return this.phoneMobile;
     }
 
-    public void setPhoneMobile(int phoneMobile) {
+    public void setPhoneMobile(String phoneMobile) {
         this.phoneMobile = phoneMobile;
     }
 

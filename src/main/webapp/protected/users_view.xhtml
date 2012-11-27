@@ -1,150 +1,221 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition 
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+        <title>ecosystem : Clients Management and Time Tracking</title>
+        <h:outputStylesheet library="css" name="style.css"/>
+    </h:head>
+    <h:body>
 
-    <h:form>
-        <p:tabMenu activeIndex="3">
-            <p:menuitem value="Dashboard" icon="icon-dashboard" outcome="index?page=dashboard"/>
-            <p:menuitem value="Projects" icon="icon-project" outcome="index?page=projects"/>
-            <p:menuitem value="Clients" icon="icon-client" outcome="index?page=clients"/>
-            <p:menuitem value="Employees" icon="icon-employee" outcome="index?page=employees"/>
-            <p:menuitem value="Parameters" icon="icon-parameter" outcome="index?page=parameters"/>
-        </p:tabMenu>
-    </h:form>
-    <p:panel id="mainPanel" style="height:400px;">
-        <h:form id="fAddUser">
-            <p:dialog id="wAddUser" widgetVar="wAddUser" header="Add Employee" resizable="false">             
-                <h:panelGrid id="panelAddUser" columns="1">
-                    <p:messages id="msgAddUser" autoUpdate="true"/>
-                    <p:panel>
-                        <h:panelGrid columns="2">
-                            <p:outputLabel value="First Name : * "/><p:inputText value="#{userController.user.firstname}" size="60" maxlength="60" required="true" requiredMessage="First Name is required."/>
-                            <p:outputLabel value="Last Name : * "/><p:inputText value="#{userController.user.lastname}"  size="60" maxlength="60" required="true" requiredMessage="Last Name is required."/>
-                            <p:outputLabel value="Job Title : * "/>
-                            <p:selectOneMenu value="#{userController.user.job.id}">
-                                <f:selectItems value="#{userJobController.userJobs}" var="job" itemLabel="#{job.name}" itemValue="#{job.id}"/>
-                            </p:selectOneMenu>
-                        </h:panelGrid>
-                    </p:panel>
-                    <p:panel style="margin-top:15px;">
-                        <h:panelGrid columns="2">
-                            <p:outputLabel value="Access Level : * "/>
-                            <p:selectOneMenu value="#{userController.user.accessLevel.id}">               
-                                <f:selectItems value="#{accessLevelController.accessLevels}" var="level" itemLabel="#{level.name}" itemValue="#{level.id}"/>
-                            </p:selectOneMenu>
+        <ui:include src="include/header.xhtml"/>
 
-                            <p:outputLabel value="User Name : *"/><p:inputText  value="#{userController.user.username}"  size="60" maxlength="60" required="true"  requiredMessage="User Name is required."/>
-                            <p:outputLabel value="Password : *"/><p:password value="#{userController.user.password}" size="60" maxlength="60" required="true"  requiredMessage="Password is required."/>
-                            <p:outputLabel value="Confirm Password : *"/><p:password value="#{userController.confirmPassword}" size="60" maxlength="60" required="true" requiredMessage="Password confirmation is required."/>  
-                        </h:panelGrid>                 
-                    </p:panel>
-                    <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
-                        <p:commandButton icon="ui-icon-disk" value="Save" action="#{userController.saveUser}" update=":fUser:taUsers" oncomplete="handleDialogClose(xhr, status, args)">
-                            <f:param name="page" value="employees" /> <!-- necessary to display correctly the page  -->
-                        </p:commandButton>
-                        <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wAddUser.hide();"/>
-                    </h:panelGrid>  
-                </h:panelGrid>
-            </p:dialog>
+        <h:form>
+            <p:tabMenu activeIndex="3">
+                <p:menuitem value="Dashboard" icon="icon-dashboard" outcome="dashboard_view"/>
+                <p:menuitem value="Projects" icon="icon-project" outcome="projects_view"/>
+                <p:menuitem value="Clients" icon="icon-client" outcome="clients_view"/>
+                <p:menuitem value="Employees" icon="icon-employee" outcome="users_view"/>
+                <p:menuitem value="Parameters" icon="icon-parameter" outcome="parameters_view"/>
+            </p:tabMenu>
         </h:form>
-
-        <h:form id="fUserDetails">
-            <p:dialog id="wUserDetails" widgetVar="wUserDetails" width="400" header="Add Employee" resizable="false">
-                <h:panelGrid id="panelEditUser" columns="1">
-                    <p:tabView id="tabViewUser" orientation="left">
-                        <p:tab id="tabGeneral" title="Basic Info">  
-                            <h:panelGrid columns="2">
-                                <p:outputLabel value="First Name : * "/><p:inputText value="#{userController.user.firstname}"/>
-                                <p:outputLabel value="Last Name : * "/><p:inputText value="#{userController.user.lastname}"/>
+        <p:panel id="mainPanel" style="height:400px;">
+            
+            <!-- Add User Popup -->
+            <h:form id="fAddUser">
+                <p:dialog id="wAddUser" widgetVar="wAddUser" header="Add Employee" resizable="false" modal="true" >        
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelAddUser" columns="1">
+                        <p:panel>
+                            <p:message id="msg1" for="txAddFirstName"/>
+                            <h:panelGrid columns="2">                         
+                                <p:outputLabel value="First Name : * "/><p:inputText id="txAddFirstName" value="#{userController.user.firstname}" size="60" maxlength="60" required="true" requiredMessage="First Name is required."/>
+                                <p:outputLabel value="Last Name : * "/><p:inputText value="#{userController.user.lastname}"  size="60" maxlength="60" required="true" requiredMessage="Last Name is required."/>
                                 <p:outputLabel value="Job Title : * "/>
-                                <p:selectOneMenu value="#{userController.user.job.id}">
+                                <p:selectOneMenu value="#{userController.user.job.id}" style="width: 100px;">
                                     <f:selectItems value="#{userJobController.userJobs}" var="job" itemLabel="#{job.name}" itemValue="#{job.id}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Address : "/><p:inputText value="#{userController.user.steet}"/>
-                                <p:outputLabel value="Zip Code : "/><p:inputText value="#{userController.user.zipCode}"/>
-                                <p:outputLabel value="City : "/><p:inputText value="#{userController.user.city}"/>
-                                <p:outputLabel value="Birtday : "/><p:inputMask  value="#{userController.user.birthday}" mask="99.99.9999"/>
                             </h:panelGrid>
-                        </p:tab>  
-                        <p:tab id="tabContact" title="Contact">  
+                        </p:panel>
+                        <p:panel style="margin-top:15px;">
                             <h:panelGrid columns="2">
-                                <p:outputLabel value="Email : "/><p:inputText  value="#{userController.user.email}"/>
-                                <p:outputLabel value="Office Phone : "/><p:inputMask value="#{userController.user.phoneOffice}" mask="+99 99 999 99 99"/>
-                                <p:outputLabel value="Mobile Phone : "/><p:inputMask value="#{userController.user.phoneMobile}" mask="+99 99 999 99 99"/>
-                                <p:outputLabel value="Private Phone : "/><p:inputMask  value="#{userController.user.phoneHome}" mask="+99 99 999 99 99"/>     
-                            </h:panelGrid>
-                        </p:tab>  
-                        <p:tab id="tabAccount" title="Account">  
-                            <h:panelGrid columns="2">
-
                                 <p:outputLabel value="Access Level : * "/>
                                 <p:selectOneMenu value="#{userController.user.accessLevel.id}" style="width: 100px;">               
                                     <f:selectItems value="#{accessLevelController.accessLevels}" var="level" itemLabel="#{level.name}" itemValue="#{level.id}"/>
                                 </p:selectOneMenu>
 
-                                <p:outputLabel value="User Name : *"/><p:inputText  value="#{userController.user.username}"/>
-                            </h:panelGrid>
-                        </p:tab>  
-                    </p:tabView>
-                    <p:commandButton icon="ui-icon-disk" value="Save" action="#{userController.saveUser}" update=":fUser:taUsers" oncomplete="handleDialogClose(xhr, status, args)">
-                        <f:param name="page" value="employees" /> <!-- necessary to display correctly the page  -->
+                                <p:outputLabel value="User Name : *"/><p:inputText  value="#{userController.user.username}"  size="60" maxlength="60" required="true"  requiredMessage="User Name is required." validator="#{usernameValidator.validate}"/>
+                                <p:outputLabel value="Password : *"/><p:password value="#{userController.user.password}" size="60" maxlength="60" required="true"  requiredMessage="Password is required."/>
+                                <p:outputLabel value="Confirm Password : *"/><p:password value="#{userController.confirmPassword}" size="60" maxlength="60" required="true" requiredMessage="Password confirmation is required."/>  
+                            </h:panelGrid>                 
+                        </p:panel>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="Save" action="#{userController.saveUser}" update=":fUser:taUsers" oncomplete="handleDialogClose(xhr, status, args)">
+                                <f:param name="page" value="employees" /> <!-- necessary to display correctly the page  -->
+                            </p:commandButton>
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wAddUser.hide();"/>
+                        </h:panelGrid>  
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            
+            <!-- Edit User Popup -->
+            <h:form id="fUserDetails">
+                <p:dialog id="wUserDetails" widgetVar="wUserDetails" header="Edit Employee" width="400" resizable="false" modal="true">
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelEditUser" columns="1">
+                        <p:tabView id="tabViewUser" orientation="left">
+                            <p:tab id="tabGeneral" title="Basic Info">  
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="First Name : * "/><p:inputText value="#{userController.user.firstname}" maxlength="60" required="true" requiredMessage="First Name is required."/>
+                                    <p:outputLabel value="Last Name : * "/><p:inputText value="#{userController.user.lastname}"  maxlength="60" required="true" requiredMessage="Last Name is required."/>
+                                    <p:outputLabel value="Job Title : * "/>
+                                    <p:selectOneMenu value="#{userController.user.job.id}" style="width: 100px;">
+                                        <f:selectItems value="#{userJobController.userJobs}" var="job" itemLabel="#{job.name}" itemValue="#{job.id}"/>
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Address : "/><p:inputText value="#{userController.user.steet}"/>
+                                    <p:outputLabel value="Zip Code : "/><p:inputText value="#{userController.user.zipCode}"/>
+                                    <p:outputLabel value="City : "/><p:inputText value="#{userController.user.city}"/>
+                                    <p:outputLabel value="Birtday : "/><p:inputMask  value="#{userController.user.birthday}" mask="99.99.9999"><f:convertDateTime pattern="dd.MM.yyyy"/></p:inputMask>
+                                </h:panelGrid>
+                            </p:tab>  
+                            <p:tab id="tabContact" title="Contact">  
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Email : "/><p:inputText  value="#{userController.user.email}"/>
+                                    <p:outputLabel value="Office Phone : "/><p:inputMask value="#{userController.user.phoneOffice}" mask="+99 99 999 99 99"/>
+                                    <p:outputLabel value="Mobile Phone : "/><p:inputMask value="#{userController.user.phoneMobile}" mask="+99 99 999 99 99"/>
+                                    <p:outputLabel value="Private Phone : "/><p:inputMask  value="#{userController.user.phoneHome}" mask="+99 99 999 99 99"/>     
+                                </h:panelGrid>
+                            </p:tab>  
+                            <p:tab id="tabAccount" title="Account">  
+                                <h:panelGrid columns="2">
+
+                                    <p:outputLabel value="Access Level : * "/>
+                                    <p:selectOneMenu value="#{userController.user.accessLevel.id}" style="width: 100px;">               
+                                        <f:selectItems value="#{accessLevelController.accessLevels}" var="level" itemLabel="#{level.name}" itemValue="#{level.id}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="User Name : *"/><p:inputText  value="#{userController.user.username}" maxlength="60" required="true"  requiredMessage="User Name is required."/>
+                                </h:panelGrid>
+                            </p:tab>  
+                        </p:tabView>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="Save" action="#{userController.saveUser}" update=":fUser:taUsers" oncomplete="handleDialogClose(xhr, status, args)" rendered="#{facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')}">
+                                <f:param name="page" value="employees" /> 
+                            </p:commandButton>
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wUserDetails.hide();"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            
+            <!-- Enable User Popup -->
+            <h:form>
+                <p:confirmDialog id="wEnableUser" widgetVar="wEnableUser" header="Enable Employee" message="Do you really want to enable this employee?"  severity="alert" >
+                    <p:commandButton value="Yes" update=":fUser:taUsers, :fUser:buSwitchUserView" oncomplete="wEnableUser.hide()"  
+                                     actionListener="#{userController.enableUser}"/>
+                    <p:commandButton value="No" onclick="wEnableUser.hide()" type="button" />  
+                </p:confirmDialog>
+            </h:form>
+            
+            <!-- Disable User Popup -->
+            <h:form>
+                <p:confirmDialog id="wDisableUser" widgetVar="wDisableUser" header="Disable Employee" message="Do you really want to disable this employee?"  severity="alert" >
+                    <p:commandButton value="Yes" update=":fUser:taUsers, :fUser:buSwitchUserView" oncomplete="wDisableUser.hide()"  
+                                     actionListener="#{userController.disableUser}"/>                    
+                    <p:commandButton value="No" onclick="wDisableUser.hide()" type="button" />  
+                </p:confirmDialog>
+            </h:form>
+            
+            <!-- Delete User Popup -->
+            <h:form>
+                <p:confirmDialog id="wDeleteUser" widgetVar="wDeleteUser" header="Delete Employee" message="Do you really want to delete permanently this employee?"  severity="alert" >
+                    <p:commandButton value="Yes" update=":fUser:taUsers" oncomplete="wDeleteUser.hide()"  
+                                     actionListener="#{userController.deleteUser()}"/>
+                    <p:commandButton  value="No" onclick="wDeleteUser.hide()" type="button" />  
+                </p:confirmDialog>
+            </h:form>
+            
+            <!-- Main Users View -->
+            <h:form id="fUser">
+
+                <!-- Action button to :
+                                1. add an employee
+                                2. Show Disabled/Active Users
+                -->
+                <div style="margin-bottom:10px;margin-top:10px;">
+                    <p:commandButton icon="ui-icon-plus" value="Add Employee" update=":fAddUser:panelAddUser" oncomplete="wAddUser.show()" action="#{userController.resetUser()}" rendered="#{facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')}">
+                        <p:resetInput target=":fAddUser:panelAddUser"/>
                     </p:commandButton>
-                </h:panelGrid>
-            </p:dialog>
-        </h:form>
-        <h:form>
-            <p:confirmDialog id="wDeleteUser" widgetVar="wDeleteUser" header="Delete Employee" message="Do you really want to delete this employee?"  severity="alert" >
-                <p:commandButton id="buConfirm" value="Yes" update=":fUser:taUsers" oncomplete="wDeleteUser.hide()"  
-                                 actionListener="#{userController.deleteUser}">
-                    <f:param name="page" value="employees" /> <!-- necessary to display correctly the page  -->
-                </p:commandButton>
-                <p:commandButton id="buDecline" value="No" onclick="wDeleteUser.hide()" type="button" />  
-            </p:confirmDialog>
-        </h:form>
-        <h:form id="fUser">
+                    <p:commandLink id="buSwitchUserView" value="#{userController.buttonSwitchViewLabel}" actionListener="#{userController.showActiveDisabledUsers()}" update="@this, taUsers" style="margin-left: 10px;"/>
+                </div>
+                <!-- Users List -->
+                <p:dataTable id="taUsers" var="user" value="#{userController.users}">
+                    <p:column headerText="First Name">
+                        #{user.firstname}
+                    </p:column>
+                    <p:column headerText="Last Name">
+                        #{user.lastname}
+                    </p:column>
+                    <p:column headerText="User Name">
+                        #{user.username}
+                    </p:column>
+                    <p:column headerText="Job Title">
+                        #{user.job.name}
+                    </p:column>
+                    <p:column headerText="Access Level">
+                        #{user.accessLevel.name}
+                    </p:column>
 
-            <p:commandButton icon="ui-icon-plus" value="Add Employee" update=":fAddUser:panelAddUser" onclick="wAddUser.show()" rendered="#{facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')}">
-                <p:resetInput target=":fAddUser:panelAddUser"/>
-            </p:commandButton>
+                    <!-- Row button to edit a user, displayed only when showing active users -->
+                    <p:column style="width:16px;" rendered="#{userController.isActiveUsers}">
+                        <p:commandButton id="buEditUser" icon="ui-icon-pencil" title="Modify" update=":fUserDetails:panelEditUser" oncomplete="wUserDetails.show()">  
+                            <f:setPropertyActionListener value="#{user}" target="#{userController.user}" />     
+                            <p:resetInput target=":fUserDetails:panelEditUser"/>
+                        </p:commandButton>  
+                    </p:column>
+                    
+                    <!-- Row button to disabled a user, displayed only when showing active users -->
+                    <p:column style="width:16px;" rendered="#{(facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')) and userController.isActiveUsers}">
+                        <p:commandButton id="buDisableUser" icon="ui-icon-circle-minus" title="Disable" oncomplete="wDisableUser.show()">  
+                            <f:setPropertyActionListener value="#{user}" target="#{userController.user}" />                      
+                        </p:commandButton>  
+                    </p:column>
 
-            <p:dataTable id="taUsers" var="user" value="#{userController.users}">
-                <p:column headerText="First Name">
-                    #{user.firstname}
-                </p:column>
-                <p:column headerText="Last Name">
-                    #{user.lastname}
-                </p:column>
-                <p:column headerText="User Name">
-                    #{user.username}
-                </p:column>
-                <p:column headerText="Job Title">
-                    #{user.job.name}
-                </p:column>
-                <p:column headerText="Access Level">
-                    #{user.accessLevel.name}
-                </p:column>
-                <p:column style="width:16px;">
-                    <p:commandButton id="buEditUser" icon="ui-icon-pencil" title="Delete" update=":fUserDetails:panelEditUser" oncomplete="wUserDetails.show()">  
-                        <f:setPropertyActionListener value="#{user}" target="#{userController.user}" />  
-                        <f:param name="page" value="employees" /> <!-- necessary to display correctly the page  -->
-                    </p:commandButton>  
-                </p:column>
-                <p:column style="width:16px;" rendered="#{facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')}">
-                    <p:commandButton id="buDeleteUser" icon="ui-icon-trash" title="Delete" oncomplete="wDeleteUser.show()">  
-                        <f:setPropertyActionListener value="#{user}" target="#{userController.user}" />  
-                        <f:param name="page" value="employees" /> <!-- necessary to display correctly the page  -->
-                    </p:commandButton>  
-                </p:column>
+                    <!-- Row button to enabled a user, displayed only when showing diabled users -->
+                    <p:column style="width:16px;" rendered="#{(facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')) and !userController.isActiveUsers}">
+                        <p:commandButton id="buEnableUser" icon="ui-icon-check" title="Enable" oncomplete="wEnableUser.show()">  
+                            <f:setPropertyActionListener value="#{user}" target="#{userController.user}" />     
+                        </p:commandButton>  
+                    </p:column>
+                    
+                    <!-- Row button to delete a user, displayed only when showing diabled users -->
+                    <p:column style="width:16px;" rendered="#{(facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')) and !userController.isActiveUsers}">
+                        <p:commandButton id="buDeleteUser" icon="ui-icon-trash" title="Delete" oncomplete="wDeleteUser.show()">  
+                            <f:setPropertyActionListener value="#{user}" target="#{userController.user}" />                      
+                        </p:commandButton>  
+                    </p:column>
 
-            </p:dataTable>
+                </p:dataTable>
 
-        </h:form>
+            </h:form>
 
-    </p:panel>
-</ui:composition>
+        </p:panel>
+
+        <script type="text/javascript">  
+            //<![CDATA[
+            function handleDialogClose(xhr, status, args) {  
+                if(!args.validationFailed && args.isOk) {                         
+                    wAddUser.hide();
+                    wUserDetails.hide();                  
+                }  
+            }  
+            //]]>
+        </script>     
+    </h:body>
+</html>
 

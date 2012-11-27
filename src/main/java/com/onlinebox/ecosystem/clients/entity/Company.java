@@ -32,8 +32,8 @@ public class Company implements IEntity, Serializable {
 	private String city;
 	@javax.persistence.Column(name="Email", length=100)
 	private String email;
-	@javax.persistence.Column(name="Phone", length=10)
-	private int phone;
+	@javax.persistence.Column(name="Phone", length=20)
+	private String phone;
 	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
 	@javax.persistence.Column(name="CreateDate", nullable=false)
 	private java.util.Date createDate;
@@ -115,11 +115,11 @@ public class Company implements IEntity, Serializable {
 		this.email = email;
 	}
 
-	public int getPhone() {
+	public String getPhone() {
 		return this.phone;
 	}
 
-	public void setPhone(int phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 

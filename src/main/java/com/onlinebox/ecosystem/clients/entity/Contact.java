@@ -25,10 +25,10 @@ public class Contact implements IEntity, Serializable {
 	private String lastname;
 	@javax.persistence.Column(name="Email", length=100)
 	private String email;
-	@javax.persistence.Column(name="PhoneOffice", length=10)
-	private int phoneOffice;
-	@javax.persistence.Column(name="PhoneMobile", length=10)
-	private int phoneMobile;
+	@javax.persistence.Column(name="PhoneOffice", length=20)
+	private String phoneOffice;
+	@javax.persistence.Column(name="PhoneMobile", length=20)
+	private String phoneMobile;
 	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
 	@javax.persistence.Column(name="CreateDate", nullable=false)
 	private java.util.Date createDate;
@@ -84,19 +84,19 @@ public class Contact implements IEntity, Serializable {
 		this.email = email;
 	}
 
-	public int getPhoneOffice() {
+	public String getPhoneOffice() {
 		return this.phoneOffice;
 	}
 
-	public void setPhoneOffice(int phoneOffice) {
+	public void setPhoneOffice(String phoneOffice) {
 		this.phoneOffice = phoneOffice;
 	}
 
-	public int getPhoneMobile() {
+	public String getPhoneMobile() {
 		return this.phoneMobile;
 	}
 
-	public void setPhoneMobile(int phoneMobile) {
+	public void setPhoneMobile(String phoneMobile) {
 		this.phoneMobile = phoneMobile;
 	}
 
