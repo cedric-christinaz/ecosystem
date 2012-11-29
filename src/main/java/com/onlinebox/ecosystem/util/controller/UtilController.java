@@ -28,4 +28,8 @@ public class UtilController {
         return format.format(new Date());
     }
     
+    public String getCurrentYear(){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy");
+        return format.format(new Date());
+    }
 }

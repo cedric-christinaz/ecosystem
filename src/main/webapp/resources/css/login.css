@@ -1,0 +1,61 @@
+
+#wrapper{
+	margin-right:auto;
+	margin-left:auto;
+	width:800px;
+	margin-top:50px;
+}
+
+.logo{
+	margin-left:100px;
+}
+
+.loginbox{	
+	border-radius:5px;
+	background:#f0f0f0;
+	border:1px solid #bbb;
+	width:555px;
+	padding:20px;
+	height:140px;
+}
+
+
+.loginLabel{
+	text-align:right;
+	padding-right:20px;
+}
+
+.featurebox{
+	margin:5px;
+	border-radius:5px;
+	background:#f0f0f0;
+	border:1px solid #bbb;
+	width:250px;
+	padding:20px;
+}
+
+.featurebox img{
+	vertical-align:-25%;
+}
+
+.featurebox-title{
+	font-family:Arial,Helvetica,sans-serif;
+	font-size:24px;
+	margin-left:15px;
+}
+
+.featurebox-text{
+	font-family:Arial,Helvetica,sans-serif;
+	font-size:13px;
+}
+
+.copyright-text{
+	font-family:Arial,Helvetica,sans-serif;
+	font-size:12px;
+}
+
+a{
+	color:black;
+}
+
+

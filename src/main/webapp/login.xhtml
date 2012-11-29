@@ -3,8 +3,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
     <h:head>
+        <h:outputStylesheet library="css" name="login.css"/>
         <title>ecosystem : Clients Management and Time Tracking</title>
 
         <style>
@@ -17,27 +19,82 @@
 
     </h:head>
     <h:body>
-      
-        <h:form id="fLogin" prependId="false"
-                onsubmit="document.getElementById('fLogin').action='j_security_check';">
-            <p:growl id="msg" />
-            <p:panelGrid columns="2">
+        <div id="wrapper">
+            <table class="logo">
+                <tr>
+                    <td>
+                        <p:graphicImage library="images" name="logo_72.png" />                    
+                    </td>
+                    <td>
+                        <h1 style="margin-left: 5px;margin-bottom: 0px;margin-top: 0px;">ecosystem</h1>
+                        <h4 style="margin-left: 50px;margin-top: 0px;margin-bottom: 0px;font-weight:normal;" class="featurebox-text">Clients Management and Time Tracking</h4>
+                    </td>
+                </tr>
+            </table>
+            <table align="center">			
+                <tr>
+                    <td>	
+                        <div  class="loginbox">
+                            <c:if test='${not empty param["Retry"]}'>                            
+                                <div align="center"><b>Please try again.</b></div>                                                          
+                            </c:if>
+                            <c:if test='${empty param["Retry"]}'>    
+                                <div>&nbsp;</div>
+                            </c:if>
+                            <h:form id="fLogin" prependId="false"
+                                    onsubmit="document.getElementById('fLogin').action='j_security_check';">
+                                <table align="center" cellspacing="10">                                
+                                    <tr>
+                                        <td class="loginLabel featurebox-text">User Name</td>
+                                        <td><p:inputText id="j_username" required="true" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="loginLabel featurebox-text">Password</td>
+                                        <td><p:password id="j_password" required="true"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="loginLabel featurebox-text"></td>
+                                        <td><p:commandButton value="Login" type="submit" ajax="false"/></td>
+                                    </tr>
+                                </table>
+                            </h:form>
 
-                <f:facet name="header">
-                    Login
-                </f:facet>
-
-                <h:outputLabel for="j_username" value="Username: "/>
-                <p:inputText id="j_username" required="true" value=""/>
-
-                <h:outputLabel for="j_password" value="Password: "/>
-                <p:password id="j_password" required="true" value="" feedback="false"/>
-
-                <f:facet name="footer">
-                    <p:commandButton value="Login" type="submit" ajax="false"/>                 
-                </f:facet>
-            </p:panelGrid>
-        </h:form>
+                        </div>			
+                    </td>
+                </tr>
+            </table>
+            <table align="center">			
+                <tr>
+                    <td>	
+                        <div  class="featurebox">                        
+                            <p:graphicImage library="images" name="dashboard.png" style="vertical-align:bottom;"/><span class="featurebox-title">Your Dashboard</span>			
+                            <p class="featurebox-text">Monitor your projects progression, pending invoices and team performance. Access quickly to critical information.</p>				
+                        </div>			
+                    </td>
+                    <td>
+                        <div  class="featurebox">
+                            <p:graphicImage library="images" name="project.png" style="vertical-align:-30%;"/><span class="featurebox-title">Managing Projects</span>
+                            <p class="featurebox-text">Associate tasks to projects, see tasks that should be invoiced, define milestones and store your ideas and brainstorming.</p>
+                        </div>		
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="featurebox">
+                            <p:graphicImage library="images" name="client.png" /><span class="featurebox-title">Your Clients</span>
+                            <p class="featurebox-text">Manage easily your clients and keep a trace of all your meetings, phone calls, mails and contracts.</p>
+                        </div>
+                    </td>
+                    <td>			
+                        <div class="featurebox">
+                            <p:graphicImage library="images" name="user.png" /><span class="featurebox-title">Your Employees</span>
+                            <p class="featurebox-text">Addresses, phone numbers, contracts, evaluations : Store at one unique location all the information about your employees.</p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="copyright-text" align="center">Copyright &copy; <!--#{utilController.currentYear} --><a href="http://www.christinaz.ch">Cédric Christinaz</a></div>
+        </div>
 
     </h:body>
 </html>
