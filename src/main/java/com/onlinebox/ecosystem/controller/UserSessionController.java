@@ -1,4 +1,3 @@
-
 package com.onlinebox.ecosystem.controller;
 
 import com.onlinebox.ecosystem.employees.bean.UserManagerBean;
@@ -13,27 +12,26 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 /**
- * This managed bean is responsible to logout correctly users. The session
- * is destroyed
+ * This managed bean is responsible to logout correctly users. The session is destroyed
+ *
  * @author cedric
  */
 @ManagedBean
 @SessionScoped
-public class UserSessionController implements Serializable{
-    
+public class UserSessionController implements Serializable {
+
     @EJB
     private UserManagerBean userBean;
-    
     private User user;
-    
+
     /**
      * Creates a new instance of LogoutController
      */
     public UserSessionController() {
     }
-    
+
     @PostConstruct
-    void init(){
+    void init() {
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         String username = context.getUserPrincipal().getName();
         user = userBean.getByUsername(username);
@@ -46,18 +44,17 @@ public class UserSessionController implements Serializable{
     public void setUser(User user) {
         this.user = user;
     }
-    
-    
-    
+
     /**
-     * This method is responsible to logout correctly the user. The session
-     * is destroyed and the user redirect to the login page.
-     * @return 
+     * This method is responsible to logout correctly the user. The session is destroyed and the user redirect to the login page.
+     *
+     * @return
      */
     public String logout() {
         ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false)).invalidate();
-        user=null;
+        user = null;
         return "dashboard_view.xhtml?faces-redirect=true";
 
     }
+    
 }

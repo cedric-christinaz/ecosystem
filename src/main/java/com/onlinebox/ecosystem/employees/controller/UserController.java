@@ -1,31 +1,36 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.onlinebox.ecosystem.employees.controller;
 
 import com.onlinebox.ecosystem.employees.bean.AccessLevelManagerBean;
 import com.onlinebox.ecosystem.employees.bean.UserJobManagerBean;
 import com.onlinebox.ecosystem.employees.bean.UserManagerBean;
 import com.onlinebox.ecosystem.employees.entity.User;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import org.apache.commons.io.IOUtils;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
  * @author cedric
  */
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class UserController implements Serializable {
 
     @EJB
@@ -40,7 +45,9 @@ public class UserController implements Serializable {
     private User user; //contain the new user to add or the current user to edit
     private String confirmPassword;
     private boolean isActiveUsers; //true is view shows the active users, false if view shows the disabled users
-
+      
+    private StreamedContent userPictureTemp;//contain the new uploaded picture (but not saved at the moment because the save is done when closing the dialog.
+    private boolean displayTempPicture;//TRUE if the new uploaded file must be displayed, FALSE if the current picuture must be displayed.
     /**
      * Creates a new instance of UserController.
      */
@@ -51,11 +58,11 @@ public class UserController implements Serializable {
     }
 
     /**
-     * Initialization method that is called at the creation of the managed bean.
-     * This method loads all the users.
+     * Initialization method that is called at the creation of the managed bean. This method loads all the users.
      */
     @PostConstruct
     void init() {
+        displayTempPicture = false;
         activeUsers = userBean.getAllActiveUsers();
         disabledUsers = userBean.getAllDisabledUsers();
         users = activeUsers;
@@ -76,8 +83,7 @@ public class UserController implements Serializable {
     }
 
     /**
-     * This method returns the currently selected user if we are editing an
-     * existing user or the new user if we are adding an new user.
+     * This method returns the currently selected user if we are editing an existing user or the new user if we are adding an new user.
      *
      * @return
      */
@@ -98,8 +104,7 @@ public class UserController implements Serializable {
     }
 
     /**
-     * This method is called by the JSF Page users_view.xhtml to delete an
-     * existing user. The user must be disabled.
+     * This method is called by the JSF Page users_view.xhtml to delete an existing user. The user must be disabled.
      */
     public void deleteUser() {
         System.out.println("deleteUser");
@@ -111,8 +116,7 @@ public class UserController implements Serializable {
     }
 
     /**
-     * This method is called by the JSF Page users_view.xhtml to disable an
-     * existing user.
+     * This method is called by the JSF Page users_view.xhtml to disable an existing user.
      */
     public void disableUser() {
         System.out.println("disableUser");
@@ -129,8 +133,7 @@ public class UserController implements Serializable {
     }
 
     /**
-     * This method is called by the JSF Page users_view.xhtml to enable an
-     * existing disabled user.
+     * This method is called by the JSF Page users_view.xhtml to enable an existing disabled user.
      */
     public void enableUser() {
         System.out.println("enableUser");
@@ -147,8 +150,7 @@ public class UserController implements Serializable {
     }
 
     /**
-     * This method is called by the JSF Page users_view.xhtml to create a new
-     * user or to edit an exising user.
+     * This method is called by the JSF Page users_view.xhtml to create a new user or to edit an exising user.
      */
     public void saveUser() {
         System.out.println("saveUser()");
@@ -179,13 +181,13 @@ public class UserController implements Serializable {
         } else {
             isOk = true;
             this.resetUser();
+            this.resetUserDetailsDialog();
         }
         context.addCallbackParam("isOk", isOk);
     }
 
     /**
-     * Reset the current selected user, so that when a popup is opened, there is
-     * now old data displayed.
+     * Reset the current selected user, so that when a popup is opened, there is now old data displayed.
      */
     public void resetUser() {
         System.out.println("resetUser()");
@@ -217,7 +219,7 @@ public class UserController implements Serializable {
         user.setJob(jobBean.get(user.getJob().getId()));
 
         user = this.userBean.create(user);
-        activeUsers.add(user);       
+        activeUsers.add(user);
     }
 
     /*
@@ -228,8 +230,7 @@ public class UserController implements Serializable {
     }
 
     /**
-     * This method allows to change dynamically the label of the link to switch
-     * from the active users view to the inactive users view.
+     * This method allows to change dynamically the label of the link to switch from the active users view to the inactive users view.
      *
      * @return
      */
@@ -244,23 +245,119 @@ public class UserController implements Serializable {
     }
 
     /**
-     * Getter that indicates if the user view shows the active users or the
-     * disabled users.
+     * Getter that indicates if the user view shows the active users or the disabled users.
      *
-     * @return true if view shows active users, false if view shows disabled
-     * users.
+     * @return true if view shows active users, false if view shows disabled users.
      */
     public boolean isIsActiveUsers() {
         return isActiveUsers;
     }
 
     /**
-     * Setter that allows to set which view is shown (active users or disabled
-     * users)
+     * Setter that allows to set which view is shown (active users or disabled users)
      *
      * @param isActiveUsers true for active users, false for disabled users.
      */
     public void setIsActiveUsers(boolean isActiveUsers) {
         this.isActiveUsers = isActiveUsers;
+    }
+
+    /**
+     * Handle the upload of the picture of the user.
+     *
+     * @param event
+     */
+    public void handlePictureUpload(FileUploadEvent event) {
+        System.out.println("handlePictureUpload");
+
+        UploadedFile file = event.getFile();
+        if (file != null) {
+            try {
+                user.setImage(IOUtils.toByteArray(file.getInputstream()));
+
+                InputStream is = new ByteArrayInputStream(user.getImage());
+                this.userPictureTemp = new DefaultStreamedContent(is, "image/png");
+
+                this.displayTempPicture = true;
+
+            } catch (IOException ex) {
+                Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }
+
+    /**
+     * This method returns the picture of the user specified in the parameter idEmployee.
+     *
+     * @return the picture of the user.
+     */
+    public StreamedContent getUserPicture() {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        if (this.displayTempPicture) {
+            
+            return userPictureTemp;
+        } 
+        else {
+            //Get the parameter idEmployee
+            Map<String, String> params = context.getExternalContext().getRequestParameterMap();
+            String sIdEmployee = params.get("idEmployee");
+
+            if (sIdEmployee != null) {
+                int idEmployee = Integer.parseInt(sIdEmployee);
+                if (idEmployee > 0) {
+                    User user = userBean.get(idEmployee);
+
+                    if (user.getImage() != null && user.getImage().length > 0) {
+                        //Ok, image exists, return it
+                        InputStream is = new ByteArrayInputStream(user.getImage());
+                        return new DefaultStreamedContent(is, "image/png");
+                    }
+                }
+            }
+        }
+        //Other case (user has no picture), return default image
+        return new DefaultStreamedContent(FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/images/defaultuser.png"), "image/png");
+
+    }
+
+    /**
+     * Getter that return the new picture to display. For the moment, this picture
+     * is not saved in the database.
+     * @return 
+     */
+    public StreamedContent getUserPictureTemp() {
+        return userPictureTemp;
+    }
+
+    /**
+     * Setter that allows to set the new picture to display. For the moment, this picture
+     * is not saved in the database.
+     * @param userPictureTemp 
+     */
+    public void setUserPictureTemp(StreamedContent userPictureTemp) {
+        this.userPictureTemp = userPictureTemp;
+    }
+
+    /**
+     * This method return TRUE if the new picture should be display or FALSE if the existing picture must be displayed.
+     * @return 
+     */
+    public boolean isDisplayTempPicture() {
+        return displayTempPicture;
+    }
+
+   
+    public void setDisplayTempPicture(boolean displayTempPicture) {
+        this.displayTempPicture = displayTempPicture;
+    }
+    
+    /**
+     * This method is called when the dialog box to edit a user is closed. We reset
+     * some values for the next time the dialog will be opened.
+     */
+    public void resetUserDetailsDialog(){
+        this.displayTempPicture = false;
     }
 }
