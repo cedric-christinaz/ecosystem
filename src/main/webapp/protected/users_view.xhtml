@@ -102,10 +102,7 @@
                                                   mode="advanced" update="pict"                                 
                                                   allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
                                                   sizeLimit="100000" auto="true"/>                          
-                                    <p:graphicImage id="pict" value="#{userController.userPicture}" style="margin-top:15px;">
-                                        <f:param name="idEmployee" value="#{userController.user.id}"/>
-                                    </p:graphicImage>
-                                    <!--<p:graphicImage id="pict" value="#{userController.userPictureTemp}" style="margin-top:15px;" rendered="#{userController.displayTempPicture}"/>-->
+                                    <p:graphicImage id="pict" value="#{userController.userPicture}" style="margin-top:15px;"/>                
                                 </h:panelGrid>
                             </p:tab>
                             <p:tab id="tabContact" title="Contact">  
@@ -180,9 +177,7 @@
                 <!-- Users List -->
                 <p:dataTable id="taUsers" var="user" value="#{userController.users}">
                     <p:column style="text-align:center;width:120px;">
-                        <p:graphicImage value="#{userController.userPicture}">
-                            <f:param name="idEmployee" value="#{user.id}"/>
-                        </p:graphicImage>
+                        <p:graphicImage value="#{userController.getUserPicture(user.image)}"/>
                     </p:column>
                     <p:column headerText="First Name">
                         #{user.firstname}

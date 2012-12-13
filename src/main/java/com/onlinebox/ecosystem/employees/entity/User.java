@@ -42,9 +42,8 @@ public class User implements IEntity, Serializable {
     private String city;
     @javax.persistence.Column(name = "IsActive", nullable = false)
     private boolean isActive;
-    @Lob
-    @javax.persistence.Column(name = "Image", length = 100000)
-    private byte[] image;
+    @javax.persistence.Column(name = "Image", length = 100)
+    private String image;
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @javax.persistence.Column(name = "LastLogin")
     private java.util.Date lastLogin;
@@ -160,11 +159,11 @@ public class User implements IEntity, Serializable {
         this.isActive = isActive;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return this.image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

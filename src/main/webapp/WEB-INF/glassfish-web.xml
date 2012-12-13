@@ -16,4 +16,5 @@
         <group-name>Power User</group-name>
     </security-role-mapping>
   
+    <property name="alternatedocroot_1" value="from=/pubimg/* dir=/var/www/ecosystem" />
 </glassfish-web-app>

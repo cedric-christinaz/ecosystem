@@ -4,12 +4,15 @@ import com.onlinebox.ecosystem.employees.bean.AccessLevelManagerBean;
 import com.onlinebox.ecosystem.employees.bean.UserJobManagerBean;
 import com.onlinebox.ecosystem.employees.bean.UserManagerBean;
 import com.onlinebox.ecosystem.employees.entity.User;
-import java.io.ByteArrayInputStream;
+import com.onlinebox.ecosystem.util.FileHelper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -18,11 +21,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import org.apache.commons.io.IOUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -45,9 +45,9 @@ public class UserController implements Serializable {
     private User user; //contain the new user to add or the current user to edit
     private String confirmPassword;
     private boolean isActiveUsers; //true is view shows the active users, false if view shows the disabled users
-      
-    private StreamedContent userPictureTemp;//contain the new uploaded picture (but not saved at the moment because the save is done when closing the dialog.
+    private String userPictureTemp;//contain the new uploaded picture (but not saved at the moment because the save is done when closing the dialog.
     private boolean displayTempPicture;//TRUE if the new uploaded file must be displayed, FALSE if the current picuture must be displayed.
+
     /**
      * Creates a new instance of UserController.
      */
@@ -62,11 +62,21 @@ public class UserController implements Serializable {
      */
     @PostConstruct
     void init() {
-        displayTempPicture = false;
-        activeUsers = userBean.getAllActiveUsers();
-        disabledUsers = userBean.getAllDisabledUsers();
-        users = activeUsers;
-        isActiveUsers = true;
+        try {
+            displayTempPicture = false;
+            activeUsers = userBean.getAllActiveUsers();
+            disabledUsers = userBean.getAllDisabledUsers();
+            users = activeUsers;
+            isActiveUsers = true;
+
+            Path target = Paths.get("/var/www/ecosystem/pubimg/defaultuser.png");
+            if (!Files.exists(target)) {
+                InputStream is = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/images/defaultuser.png");
+                Files.copy(is, target, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -112,6 +122,14 @@ public class UserController implements Serializable {
             userBean.delete(user);
             users.remove(user);
             disabledUsers.remove(user);
+            try {
+                Path file = Paths.get("/var/www/ecosystem/pubimg/" + user.getImage());
+                if (Files.exists(file)) {
+                    Files.delete(file);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -273,10 +291,12 @@ public class UserController implements Serializable {
         UploadedFile file = event.getFile();
         if (file != null) {
             try {
-                user.setImage(IOUtils.toByteArray(file.getInputstream()));
+                user.setImage(user.getUsername() + "." + FileHelper.getExtensionFromMimeType(file.getContentType()));
 
-                InputStream is = new ByteArrayInputStream(user.getImage());
-                this.userPictureTemp = new DefaultStreamedContent(is, "image/png");
+                Path target = Paths.get("/var/www/ecosystem/pubimg/" + user.getImage());
+                Files.copy(file.getInputstream(), target, StandardCopyOption.REPLACE_EXISTING);
+
+                this.userPictureTemp = user.getImage();
 
                 this.displayTempPicture = true;
 
@@ -288,76 +308,71 @@ public class UserController implements Serializable {
     }
 
     /**
-     * This method returns the picture of the user specified in the parameter idEmployee.
+     * This method returns the picture of the selected user (call when editing a user).
      *
      * @return the picture of the user.
      */
-    public StreamedContent getUserPicture() {
-        FacesContext context = FacesContext.getCurrentInstance();
-
+    public String getUserPicture() {
         if (this.displayTempPicture) {
-            
-            return userPictureTemp;
-        } 
-        else {
-            //Get the parameter idEmployee
-            Map<String, String> params = context.getExternalContext().getRequestParameterMap();
-            String sIdEmployee = params.get("idEmployee");
-
-            if (sIdEmployee != null) {
-                int idEmployee = Integer.parseInt(sIdEmployee);
-                if (idEmployee > 0) {
-                    User user = userBean.get(idEmployee);
-
-                    if (user.getImage() != null && user.getImage().length > 0) {
-                        //Ok, image exists, return it
-                        InputStream is = new ByteArrayInputStream(user.getImage());
-                        return new DefaultStreamedContent(is, "image/png");
-                    }
-                }
-            }
+            return "/pubimg/" + userPictureTemp;
         }
-        //Other case (user has no picture), return default image
-        return new DefaultStreamedContent(FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/images/defaultuser.png"), "image/png");
+        if (user.getImage() != null && !user.getImage().equals("")) {
+            return "/pubimg/" + user.getImage();
+        }
 
+        return "/pubimg/defaultuser.png";
     }
 
     /**
-     * Getter that return the new picture to display. For the moment, this picture
-     * is not saved in the database.
-     * @return 
+     * This method returns the picture of the specified user (call when filling the user tables).
+     *
+     * @param picturePath Name of the picture to display
+     * @return
      */
-    public StreamedContent getUserPictureTemp() {
+    public String getUserPicture(String pictureName) {
+
+        if (pictureName != null && !pictureName.equals("")) {
+            return "/pubimg/" + pictureName;
+        }
+
+        return "/pubimg/defaultuser.png";
+    }
+
+    /**
+     * Getter that return the new picture to display. For the moment, this picture is not saved in the database.
+     *
+     * @return
+     */
+    public String getUserPictureTemp() {
         return userPictureTemp;
     }
 
     /**
-     * Setter that allows to set the new picture to display. For the moment, this picture
-     * is not saved in the database.
-     * @param userPictureTemp 
+     * Setter that allows to set the new picture to display. For the moment, this picture is not saved in the database.
+     *
+     * @param userPictureTemp
      */
-    public void setUserPictureTemp(StreamedContent userPictureTemp) {
+    public void setUserPictureTemp(String userPictureTemp) {
         this.userPictureTemp = userPictureTemp;
     }
 
     /**
      * This method return TRUE if the new picture should be display or FALSE if the existing picture must be displayed.
-     * @return 
+     *
+     * @return
      */
     public boolean isDisplayTempPicture() {
         return displayTempPicture;
     }
 
-   
     public void setDisplayTempPicture(boolean displayTempPicture) {
         this.displayTempPicture = displayTempPicture;
     }
-    
+
     /**
-     * This method is called when the dialog box to edit a user is closed. We reset
-     * some values for the next time the dialog will be opened.
+     * This method is called when the dialog box to edit a user is closed. We reset some values for the next time the dialog will be opened.
      */
-    public void resetUserDetailsDialog(){
+    public void resetUserDetailsDialog() {
         this.displayTempPicture = false;
     }
 }
