@@ -4,11 +4,19 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:c="http://java.sun.com/jsp/jstl/core">
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title>ecosystem : Clients Management and Time Tracking</title>
         <h:outputStylesheet library="css" name="style.css"/>
+
+        <style>
+
+            .fileupload-content{
+                display:none !important;
+            }
+
+        </style>
+
     </h:head>
     <h:body>
 
@@ -22,9 +30,125 @@
                 <p:menuitem value="Parameters" icon="icon-parameter" outcome="parameters_view"/>
             </p:tabMenu>
         </h:form>
-        <p:panel id="mainPanel" style="height:400px;">
-            clients view!
-        </p:panel>
-    </h:body>
-</html>
+        <p:panel id="mainPanel">
+
+            <!-- Add Company Popup -->
+            <h:form id="fAddCompany">
+                <p:dialog id="wAddCompany" widgetVar="wAddCompany" header="Add Company" resizable="false" modal="true" >        
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelAddCompany" columns="1">
+                        <p:outputLabel value="Company Name : * "/><p:inputText id="txCompanyName" value="#{clientController.company.name}" size="60" maxlength="100" required="true" requiredMessage="Company Name is required."/>
+
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="Save" action="#{clientController.saveCompany}" update=":fCompany:taCompanies" oncomplete="handleDialogClose(xhr, status, args)"/>                                                 
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wAddCompany.hide();"/>
+                        </h:panelGrid>  
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+
+            <!-- Edit Company Popup -->
+            <h:form id="fCompanyDetails" enctype="multipart/form-data">              
+                <p:dialog id="wCompanyDetails" widgetVar="wCompanyDetails" header="Edit Company" width="450" resizable="false" modal="true">
+                    <p:ajax event="close" listener="#{clientController.resetCompanyDetailsDialog()}"/> 
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelEditCompany" columns="1">
+                        <p:tabView id="tabViewCompany" orientation="left" style="width:400px;">
+                            <p:tab id="tabGeneral" title="Basic Info">  
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Company Name : * "/><p:inputText value="#{clientController.company.name}" maxlength="100" required="true" requiredMessage="Company Name is required."/>                                                       
+                                    <p:outputLabel value="Address : "/><p:inputText value="#{clientController.company.street}"/>
+                                    <p:outputLabel value="Zip Code : "/><p:inputText value="#{clientController.company.zipCode}"/>
+                                    <p:outputLabel value="City : "/><p:inputText value="#{clientController.company.city}"/>
+                                    <p:outputLabel value="Email : "/><p:inputText  value="#{clientController.company.email}"/>
+                                    <p:outputLabel value="Office Phone : "/><p:inputMask value="#{clientController.company.phone}" mask="+99 99 999 99 99"/>
+                                    <p:outputLabel value="Fax : "/><p:inputMask value="#{clientController.company.fax}" mask="+99 99 999 99 99"/>
+                                </h:panelGrid>
+                            </p:tab>      
+                            <p:tab id="tabImage" title="Logo">
+                                <h:panelGrid columns="1" width="100%">                              
+                                    <p:fileUpload fileUploadListener="#{clientController.handlePictureUpload}"                                               
+                                                  mode="advanced" update="pict"                             
+                                                  allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+                                                  sizeLimit="100000" auto="true"/>                          
+                                    <p:graphicImage id="pict" value="#{clientController.logo}" style="margin-top:15px;" rendered="#{clientController.hasLogo()}"/>       
+                                </h:panelGrid>
+                            </p:tab>
+                        </p:tabView>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="Save" action="#{clientController.saveCompany}" update=":fCompany:taCompanies" oncomplete="handleDialogClose(xhr, status, args)" rendered="#{facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')}"/>
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wCompanyDetails.hide();"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+
+            <!-- Delete Company Popup -->
+            <h:form>
+                <p:confirmDialog id="wDeleteCompany" widgetVar="wDeleteCompany" header="Delete Company" message="Do you really want to delete permanently this company?"  severity="alert" >
+                    <p:commandButton value="Yes" update=":fCompany:taCompanies" oncomplete="wDeleteCompany.hide()"  
+                                     actionListener="#{clientController.deleteCompany()}"/>
+                    <p:commandButton  value="No" onclick="wDeleteCompany.hide()" type="button" />  
+                </p:confirmDialog>
+            </h:form>
+
+
+            <!-- ************************************************************************************* -->
+            <!-- Main Companies View -->
+            <h:form id="fCompany">
+
+                <!-- Action button to :
+                                1. add a company
+                -->
+                <div style="margin-bottom:10px;margin-top:10px;">
+                    <p:commandButton icon="ui-icon-plus" value="Add Client" update=":fAddCompany:panelAddCompany" oncomplete="wAddCompany.show()" action="#{clientController.resetCompany()}" rendered="#{facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')}">
+                        <p:resetInput target=":fAddCompany:panelAddCompany"/>
+                    </p:commandButton>
+                </div>
+                <!-- Companies List -->
+                <p:dataTable id="taCompanies" var="company" value="#{clientController.companies}">
+                     <p:column style="text-align:center;width:120px;">
+                         <p:graphicImage value="#{clientController.getLogo(company.logo)}" rendered="#{clientController.hasLogo(company.logo)}"/>
+                     </p:column>
+                     <p:column headerText="Company Name">
+                         #{company.name}
+                     </p:column>
+                     <p:column headerText="Phone Number">
+                         #{company.phone}
+                     </p:column>     
+
+                     <!-- Row button to edit a company -->
+                     <p:column style="width:16px;">
+                         <p:commandButton id="buEditCompany" icon="ui-icon-pencil" title="Modify" update=":fCompanyDetails:panelEditCompany" oncomplete="wCompanyDetails.show()">  
+                             <f:setPropertyActionListener value="#{company}" target="#{clientController.company}" />     
+                             <p:resetInput target=":fCompanyDetails:panelEditCompany"/>
+                         </p:commandButton>  
+                     </p:column>
+
+                     <!-- Row button to delete a company -->
+                     <p:column style="width:16px;" rendered="#{(facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER'))}">
+                         <p:commandButton id="buDeleteCompany" icon="ui-icon-trash" title="Delete" oncomplete="wDeleteCompany.show()">  
+                             <f:setPropertyActionListener value="#{company}" target="#{clientController.company}" />                      
+                         </p:commandButton>  
+                     </p:column>
+
+                 </p:dataTable>
+
+                </h:form>
+
+
+            </p:panel>
+
+            <script type="text/javascript">  
+                //<![CDATA[
+                function handleDialogClose(xhr, status, args) {  
+                    if(!args.validationFailed && args.isOk) {                         
+                        wAddCompany.hide();   
+                        wCompanyDetails.hide();
+                    }  
+                }           
+                //]]>
+            </script>     
+        </h:body>
+    </html>
 

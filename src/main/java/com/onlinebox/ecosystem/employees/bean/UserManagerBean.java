@@ -102,7 +102,11 @@ public class UserManagerBean {
         return em.find(User.class, id);
     }
 
-    public User getByUsername(String username) throws NoResultException  {
+    /**
+	 * 
+	 * @param username
+	 */
+	public User getByUsername(String username) throws NoResultException  {
         Query query = em.createNamedQuery("User.findByUsername");
         query.setParameter("username", username);
         try{
@@ -163,4 +167,5 @@ public class UserManagerBean {
 
         return hexString.toString();
     }
+
 }

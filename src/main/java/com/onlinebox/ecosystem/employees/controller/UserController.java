@@ -181,7 +181,7 @@ public class UserController implements Serializable {
                     //Modify an existing user because id already contains a valid value (>0)
                     updateUser();
                 } else {
-                    //New user because id does not contain a valid value (<=0=
+                    //New user because id does not contain a valid value (<=0)
                     if (user.getPassword().equals(this.confirmPassword)) {
                         createUser();
                     } else {
@@ -324,9 +324,9 @@ public class UserController implements Serializable {
     }
 
     /**
-     * This method returns the picture of the specified user (call when filling the user tables).
+     * This method returns the picture of the specified user (call when filling the users table).
      *
-     * @param picturePath Name of the picture to display
+     * @param pictureName Name of the picture to display
      * @return
      */
     public String getUserPicture(String pictureName) {
