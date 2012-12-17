@@ -3,6 +3,9 @@ package com.onlinebox.ecosystem.controller;
 import com.onlinebox.ecosystem.employees.bean.UserManagerBean;
 import com.onlinebox.ecosystem.employees.entity.User;
 import java.io.Serializable;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -35,6 +38,15 @@ public class UserSessionController implements Serializable {
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         String username = context.getUserPrincipal().getName();
         user = userBean.getByUsername(username);
+        
+        user.setLastLogin(new Date());
+        try {
+            user = userBean.update(user);
+        } catch (Exception ex) {
+            //Should never have problem here.
+            Logger.getLogger(UserSessionController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     public User getUser() {
