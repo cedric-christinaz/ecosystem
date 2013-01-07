@@ -9,18 +9,11 @@
         <title>ecosystem : Clients Management and Time Tracking</title>
         <h:outputStylesheet library="css" name="style.css"/>
 
-        <style>
+        <style type="text/css">
 
             .fileupload-content{
                 display:none !important;
-            }
-
-            .userPanel{
-                font-size: 100% !important;
-            }
-            .userPanel tr, .userPanel td{          
-                border-style: hidden !important;
-            }
+            }        
         </style>
 
     </h:head>
@@ -29,12 +22,13 @@
         <ui:include src="include/header.xhtml"/>
 
         <h:form>
-            <p:tabMenu activeIndex="3">
-                <p:menuitem value="Dashboard" icon="icon-dashboard" outcome="dashboard_view"/>
-                <p:menuitem value="Projects" icon="icon-project" outcome="projects_view"/>
-                <p:menuitem value="Clients" icon="icon-client" outcome="clients_view"/>
-                <p:menuitem value="Employees" icon="icon-employee" outcome="users_view"/>
-                <p:menuitem value="Parameters" icon="icon-parameter" outcome="parameters_view"/>
+            <p:tabMenu activeIndex="4">
+                <p:menuitem value="Dashboard" icon="icon-dashboard" outcome="dashboard_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Time Tracking" icon="icon-timetracking" outcome="timetracking_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Projects" icon="icon-project" outcome="projects_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Clients" icon="icon-client" outcome="clients_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Employees" icon="icon-employee" outcome="users_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Parameters" icon="icon-parameter" outcome="parameters_view" styleClass="ui-my-menu"/>
             </p:tabMenu>
         </h:form>
         <p:panel id="mainPanel">
@@ -77,21 +71,21 @@
 
             <!-- Edit User Popup -->
             <h:form id="fUserDetails" enctype="multipart/form-data">              
-                <p:dialog id="wUserDetails" widgetVar="wUserDetails" header="Edit Employee" width="400" resizable="false" modal="true">
+                <p:dialog id="wUserDetails" widgetVar="wUserDetails" header="Edit Employee" resizable="false" modal="true">
                     <p:ajax event="close" listener="#{userController.resetUserDetailsDialog()}"/> 
                     <p:messages autoUpdate="true" severity="error, severe, fatal" />
                     <h:panelGrid id="panelEditUser" columns="1">
-                        <p:tabView id="tabViewUser" orientation="left">
+                        <p:tabView id="tabViewUser" orientation="left" style="width:560px;">
                             <p:tab id="tabGeneral" title="Basic Info">  
                                 <h:panelGrid columns="2">
-                                    <p:outputLabel value="First Name : * "/><p:inputText value="#{userController.user.firstname}" maxlength="60" required="true" requiredMessage="First Name is required."/>
-                                    <p:outputLabel value="Last Name : * "/><p:inputText value="#{userController.user.lastname}"  maxlength="60" required="true" requiredMessage="Last Name is required."/>
+                                    <p:outputLabel value="First Name : * "/><p:inputText value="#{userController.user.firstname}" maxlength="60" size="38" required="true" requiredMessage="First Name is required."/>
+                                    <p:outputLabel value="Last Name : * "/><p:inputText value="#{userController.user.lastname}"  maxlength="60" size="38" required="true" requiredMessage="Last Name is required."/>
                                     <p:outputLabel value="Job Title : * "/>
                                     <p:selectOneMenu value="#{userController.user.job.id}" style="width: 100px;">
                                         <f:selectItems value="#{userJobController.userJobs}" var="job" itemLabel="#{job.name}" itemValue="#{job.id}"/>
                                     </p:selectOneMenu>
-                                    <p:outputLabel value="Address : "/><p:inputText value="#{userController.user.steet}"/>
-                                    <p:outputLabel value="Zip Code : "/><p:inputText value="#{userController.user.zipCode}"/>
+                                    <p:outputLabel value="Address : "/><p:inputText value="#{userController.user.steet}"  size="38"/>
+                                    <p:outputLabel value="Zip Code : "/><p:inputText value="#{userController.user.zipCode}" size="38"/>
                                     <p:outputLabel value="City : "/><p:inputText value="#{userController.user.city}"/>
                                     <p:outputLabel value="Birtday : "/><p:inputMask  value="#{userController.user.birthday}" mask="99.99.9999"><f:convertDateTime pattern="dd.MM.yyyy"/></p:inputMask>
                                 </h:panelGrid>
@@ -107,7 +101,7 @@
                             </p:tab>
                             <p:tab id="tabContact" title="Contact">  
                                 <h:panelGrid columns="2">
-                                    <p:outputLabel value="Email : "/><p:inputText  value="#{userController.user.email}"/>
+                                    <p:outputLabel value="Email : "/><p:inputText  value="#{userController.user.email}"  size="38"/>
                                     <p:outputLabel value="Office Phone : "/><p:inputMask value="#{userController.user.phoneOffice}" mask="+99 99 999 99 99"/>
                                     <p:outputLabel value="Mobile Phone : "/><p:inputMask value="#{userController.user.phoneMobile}" mask="+99 99 999 99 99"/>
                                     <p:outputLabel value="Private Phone : "/><p:inputMask  value="#{userController.user.phoneHome}" mask="+99 99 999 99 99"/>     
@@ -121,7 +115,7 @@
                                         <f:selectItems value="#{accessLevelController.accessLevels}" var="level" itemLabel="#{level.name}" itemValue="#{level.id}"/>
                                     </p:selectOneMenu>
 
-                                    <p:outputLabel value="User Name : *"/><p:inputText  value="#{userController.user.username}" maxlength="60" required="true"  requiredMessage="User Name is required."/>
+                                    <p:outputLabel value="User Name : *"/><p:inputText  value="#{userController.user.username}" maxlength="60" size="38" required="true"  requiredMessage="User Name is required."/>
                                 </h:panelGrid>
                             </p:tab>  
                         </p:tabView>

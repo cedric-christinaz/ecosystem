@@ -2,13 +2,17 @@ package com.onlinebox.ecosystem.clients.controller;
 
 import com.onlinebox.ecosystem.clients.bean.CompanyManagerBean;
 import com.onlinebox.ecosystem.clients.entity.Company;
+import com.onlinebox.ecosystem.clients.entity.Contact;
+import com.onlinebox.ecosystem.clients.entity.ContactType;
 import com.onlinebox.ecosystem.employees.controller.UserController;
+import com.onlinebox.ecosystem.projects.entity.Project;
 import com.onlinebox.ecosystem.util.FileHelper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +40,8 @@ public class ClientController {
     private Company company; //contain the new company to add or the current company to edit
     private String companyLogoTemp;//contain the new uploaded logo (but not saved at the moment because the save is done when closing the dialog.
     private boolean displayTempLogo;//TRUE if the new uploaded logo must be displayed, FALSE if the current logo must be displayed.
+    private Project newProject;
+    private Contact newContact;
 
     /**
      * Creates a new instance of ClientController
@@ -44,6 +50,9 @@ public class ClientController {
         //Important to create a new empty company. Otherwise, the JSF page
         //links a null object.
         company = new Company();
+        newProject = new Project();
+        newContact = new Contact();
+        newContact.setRole(new ContactType());
     }
 
     /**
@@ -262,4 +271,59 @@ public class ClientController {
     public void resetCompanyDetailsDialog() {
         this.displayTempLogo = false;
     }
+
+    public Project getNewProject() {
+        return newProject;
+    }
+
+    public void setNewProject(Project newProject) {
+        this.newProject = newProject;
+    }
+
+    public void addNewProject() {
+        System.out.println("addNewProject");
+        if (newProject != null && newProject.getName() != null && !newProject.getName().equals("")) {
+            newProject.setCompany(company);
+            company.getProjects().add(newProject);
+            RequestContext.getCurrentInstance().addCallbackParam("isOk", true);
+        }
+    }
+    
+    /**
+     * 
+     * @param query
+     * @return 
+     */
+    public List<Company> searchClient(String query){
+        
+        List<Company> res = new ArrayList<Company>();
+        
+        for(Company company : this.companies){
+            if(company.getName().toLowerCase().startsWith(query.toLowerCase())){
+                res.add(company);
+            }
+        }
+        return res;
+  
+    }
+
+    public Contact getNewContact() {
+        return newContact;
+    }
+
+    public void setNewContact(Contact newContact) {
+        this.newContact = newContact;
+    }
+    
+     public void addNewContact() {
+        System.out.println("addNewContact");
+        if (newContact != null && newContact.getFirstname() != null && !newContact.getFirstname().equals("")) {
+            newContact.setCompany(company);
+            company.getContacts().add(newContact);
+            RequestContext.getCurrentInstance().addCallbackParam("isOk", true);
+        }
+    }
+    
+    
+    
 }

@@ -1,6 +1,7 @@
 package com.onlinebox.ecosystem.clients.entity;
 
-import com.onlinebox.ecosystem.util.entity.*;
+import com.onlinebox.ecosystem.projects.entity.*;
+import com.onlinebox.ecosystem.util.entity.IEntity;
 import java.io.*;
 import java.util.*;
 import javax.persistence.*;
@@ -9,7 +10,7 @@ import javax.persistence.*;
     @NamedQuery(name = "Company.findAll", query = "select c from Company c order by c.name"),})
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
-@javax.persistence.Table(name = "t_company")
+@javax.persistence.Table(name="t_company")
 public class Company implements IEntity, Serializable {
 
     @javax.persistence.OneToMany(mappedBy = "company")
@@ -39,15 +40,24 @@ public class Company implements IEntity, Serializable {
     private String phone;
     @javax.persistence.Column(name = "Fax", length = 20)
     private String fax;
-    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @javax.persistence.Column(name = "CreateDate", nullable = false)
+	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	@javax.persistence.Column(name="CreateDate", nullable=false)
     private java.util.Date createDate;
-    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @javax.persistence.Column(name = "LastUpdateDate", nullable = false)
+	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	@javax.persistence.Column(name="LastUpdateDate", nullable=false)
     private java.util.Date lastUpdateDate;
     @javax.persistence.Column(name = "Logo", length = 100)
     private String logo;
+	@javax.persistence.OneToMany(mappedBy="company")
+	@javax.persistence.JoinColumn(name="t_companyId", referencedColumnName="Id", nullable=false)
+	private List<Project> projects;
+	@javax.persistence.Column(name="Website", length=100)
+	private String website;
 
+    public Company(){
+        this.setProjects(new ArrayList<Project>());
+    }    
+        
     public List<Contact> getContacts() {
         return this.contacts;
     }
@@ -159,4 +169,20 @@ public class Company implements IEntity, Serializable {
     public void setLogo(String logo) {
         this.logo = logo;
     }
+
+	public List<Project> getProjects() {
+		return this.projects;
+	}
+
+	public void setProjects(List<Project> projects) {
+		this.projects = projects;
+	}
+
+	public String getWebsite() {
+		return this.website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
 }

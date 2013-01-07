@@ -9,22 +9,195 @@
     <h:head>
         <title>ecosystem : Clients Management and Time Tracking</title>
         <h:outputStylesheet library="css" name="style.css"/>
+
+        <style type="text/css">
+            .ui-autocomplete input{
+                width:330px;
+            }
+        </style>
+
     </h:head>
     <h:body>
 
         <ui:include src="include/header.xhtml"/>
         <h:form>
-            <p:tabMenu activeIndex="0">
-                <p:menuitem value="Dashboard" icon="icon-dashboard" outcome="dashboard_view"/>
-                <p:menuitem value="Projects" icon="icon-project" outcome="projects_view"/>
-                <p:menuitem value="Clients" icon="icon-client" outcome="clients_view"/>
-                <p:menuitem value="Employees" icon="icon-employee" outcome="users_view"/>
-                <p:menuitem value="Parameters" icon="icon-parameter" outcome="parameters_view"/>
+            <p:tabMenu activeIndex="2">
+                <p:menuitem value="Dashboard" icon="icon-dashboard" outcome="dashboard_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Time Tracking" icon="icon-timetracking" outcome="timetracking_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Projects" icon="icon-project" outcome="projects_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Clients" icon="icon-client" outcome="clients_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Employees" icon="icon-employee" outcome="users_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Parameters" icon="icon-parameter" outcome="parameters_view" styleClass="ui-my-menu"/>
             </p:tabMenu>
         </h:form>
-        <p:panel id="mainPanel" style="height:400px;">
-            project view!
+        <p:panel id="mainPanel">
+
+            <!-- Add Task Popup -->
+            <h:form id="fAddTask">
+                <p:dialog id="wAddTask" widgetVar="wAddTask" header="Add Task" resizable="false" modal="true" >        
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelAddTask" columns="1">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Date : * "/>
+                            <p:calendar value="#{projectController.task.taskDate}" pattern="dd.MM.yyyy"/>  
+
+                            <p:outputLabel value="Duration : * "/>
+                            <p:inputMask value="#{projectController.task.duration}" mask="99:99" converter="#{durationConverter}" converterMessage="Duration format not correct."/>                                      
+
+                            <p:outputLabel value="Task Type : * "/>
+                            <p:selectOneMenu value="#{projectController.task.taskType.id}" style="width: 100px;">               
+                                <f:selectItems value="#{taskTypeController.taskTypes}" var="taskType" itemLabel="#{taskType.name}" itemValue="#{taskType.id}"/>
+                            </p:selectOneMenu> 
+
+                            <p:outputLabel value="Remark : "/>
+                            <p:inputTextarea rows="3" cols="66" maxlength="255" value="#{projectController.task.remark}"/>  
+
+                        </h:panelGrid>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="OK" action="#{projectController.addNewTask}" update=":fProjectDetails:tabViewProject:taTasks" oncomplete="wAddTask.hide();"/>                                                 
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wAddTask.hide();"/>
+                        </h:panelGrid>  
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+
+            <!-- Add Project Popup -->
+            <h:form id="fAddProject">
+                <p:dialog id="wAddProject" widgetVar="wAddProject" header="Add Project" resizable="false" modal="true" >        
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelAddProject" columns="1">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Project Name : * "/><p:inputText id="txCompanyName" value="#{projectController.project.name}" size="60" maxlength="100" required="true" requiredMessage="Project Name is required."/>
+                            <p:outputLabel value="Client Name : * "/>
+                            <p:autoComplete value="#{projectController.project.company}" completeMethod="#{clientController.searchClient}" minQueryLength="3"
+                                            var="company" itemLabel="#{company.name}" itemValue="#{company}" 
+                                            converter="#{companyConverter}" converterMessage="The Client does not exist." />                                          
+                            <p:outputLabel value="Estimated Hours : "/><p:inputText value="#{projectController.project.estimatedHour}" converterMessage="Estimated Hours must be a number."/>       
+                        </h:panelGrid>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="Save" action="#{projectController.saveProject}" update=":fProject:taProjects" oncomplete="handleDialogClose(xhr, status, args)"/>                                                 
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wAddProject.hide();"/>
+                        </h:panelGrid>  
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+
+
+            <!-- Edit Project Popup -->
+            <h:form id="fProjectDetails" enctype="multipart/form-data">              
+                <p:dialog id="wProjectDetails" widgetVar="wProjectDetails" header="Edit Project" resizable="false" modal="true">
+                    <p:ajax event="close" listener="#{projectController.resetProjectDetailsDialog()}"/> 
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelEditProject" columns="1">
+                        <p:tabView id="tabViewProject" orientation="left" style="width:700px;">
+                            <p:tab id="tabGeneral" title="Basic Info">  
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="Project Name : * "/><p:inputText value="#{projectController.project.name}" maxlength="255" size="38" required="true" requiredMessage="Project Name is required."/>                                                       
+                                    <p:outputLabel value="Estimated Hours : "/><p:inputText value="#{projectController.project.estimatedHour}"  converterMessage="Estimated Hours must be a number."/>                         
+                                </h:panelGrid>
+                            </p:tab>      
+                            <p:tab id="tabTask" title="Tasks">
+                                <div style="margin-bottom:10px;">
+                                    <p:commandButton icon="ui-icon-plus" value="Add Task" update=":fAddTask:panelAddTask" oncomplete="wAddTask.show()" rendered="#{facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')}">
+                                        <p:resetInput target=":fAddTask:panelAddTask"/>
+                                    </p:commandButton>
+                                </div>
+                                <p:dataTable id="taTasks" var="task" value="#{projectController.project.tasks}">                                    
+                                    <p:column headerText="Date">
+                                        <h:outputText value="#{task.taskDate}">
+                                            <f:convertDateTime pattern="dd.MM.yyyy"/>
+                                        </h:outputText>
+                                    </p:column>      
+                                    <p:column headerText="Duration">
+                                        <h:outputText value="#{task.duration}" converter="#{durationConverter}"/>                                         
+                                    </p:column>      
+                                    <p:column headerText="Task">
+                                        #{task.taskType.name}
+                                    </p:column>          
+                                    <p:column headerText="Remark" width="100">
+                                        #{task.remark}
+                                    </p:column>      
+                                </p:dataTable>
+                            </p:tab>
+
+                        </p:tabView>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="Save" action="#{projectController.saveProject}" update=":fProject:taProjects" oncomplete="handleDialogClose(xhr, status, args)" rendered="#{facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')}"/>
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wProjectDetails.hide();"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+
+
+            <!-- Delete Project Popup -->
+            <h:form>
+                <p:confirmDialog id="wDeleteProject" widgetVar="wDeleteProject" header="Delete Project" message="Do you really want to delete permanently this project?"  severity="alert" >
+                    <p:commandButton value="Yes" update=":fProject:taProjects" oncomplete="wDeleteProject.hide()"  
+                                     actionListener="#{projectController.deleteProject()}"/>
+                    <p:commandButton  value="No" onclick="wDeleteProject.hide()" type="button" />  
+                </p:confirmDialog>
+            </h:form>
+
+
+            <!-- ************************************************************************************* -->
+            <!-- Main Projects View -->
+            <h:form id="fProject">
+
+                <!-- Action button to :
+                                1. add a project
+                -->
+                <div style="margin-bottom:10px;margin-top:10px;">
+                    <p:commandButton icon="ui-icon-plus" value="Add Project" update=":fAddProject:panelAddProject" oncomplete="wAddProject.show()" action="#{projectController.resetProject()}" rendered="#{facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')}">
+                        <p:resetInput target=":fAddProject:panelAddProject"/>
+                    </p:commandButton>
+                </div>
+                <!-- Projects List -->
+                <p:dataTable id="taProjects" var="project" value="#{projectController.projects}">                   
+                    <p:column headerText="Project Name">
+                        #{project.name}
+                    </p:column>
+                    <p:column headerText="Client Name">
+                        #{project.company.name}
+                    </p:column>     
+                    <p:column headerText="Estimated Hours">
+                        #{project.estimatedHour}#{" h"}
+                    </p:column>  
+                    <p:column headerText="Done">
+                        <h:outputText value="#{projectController.getDoneHours(project)}" converter="#{durationConverter}"/>
+                    </p:column>  
+                    <!-- Row button to edit a project -->
+                    <p:column style="width:16px;">
+                        <p:commandButton id="buEditProject" icon="ui-icon-pencil" title="Modify" update=":fProjectDetails:panelEditProject" oncomplete="wProjectDetails.show()">  
+                            <f:setPropertyActionListener value="#{project}" target="#{projectController.project}" />     
+                            <p:resetInput target=":fProjectDetails:panelEditProject"/>
+                        </p:commandButton>  
+                    </p:column>
+
+                    <!-- Row button to delete a project -->
+                    <p:column style="width:16px;">
+                        <p:commandButton id="buDeleteProject" icon="ui-icon-trash" title="Delete" oncomplete="wDeleteProject.show()">  
+                            <f:setPropertyActionListener value="#{project}" target="#{projectController.project}" />               
+                        </p:commandButton>  
+                    </p:column>
+
+                </p:dataTable>
+
+            </h:form>
+
+
         </p:panel>
+
+        <script type="text/javascript">  
+            //<![CDATA[
+            function handleDialogClose(xhr, status, args) {  
+                if(!args.validationFailed && args.isOk) {                         
+                    wAddProject.hide();       
+                    wProjectDetails.hide();
+                }  
+            }           
+            //]]>
+        </script>     
     </h:body>
 </html>
 

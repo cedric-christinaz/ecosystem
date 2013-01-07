@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.onlinebox.ecosystem.util.controller;
 
 import com.onlinebox.ecosystem.employees.bean.UserManagerBean;

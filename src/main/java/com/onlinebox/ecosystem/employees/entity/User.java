@@ -3,6 +3,8 @@ package com.onlinebox.ecosystem.employees.entity;
 import com.onlinebox.ecosystem.util.entity.*;
 import java.io.*;
 import javax.persistence.*;
+import java.util.*;
+import com.onlinebox.ecosystem.projects.entity.*;
 
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "select u from User u order by u.lastname, u.firstname"),
@@ -63,6 +65,9 @@ public class User implements IEntity, Serializable {
     private String username;
     @javax.persistence.Column(name = "Password", nullable = false, length = 128)
     private String password;
+	@javax.persistence.OneToMany(mappedBy="user")
+	@javax.persistence.JoinColumn(name="t_userId", referencedColumnName="Id", nullable=false)
+	private List<Task> tasks;
 
     public User() {
         this.setAccessLevel(new AccessLevel());
@@ -234,4 +239,12 @@ public class User implements IEntity, Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
+
+	public List<Task> getTasks() {
+		return this.tasks;
+	}
+
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
+	}
 }

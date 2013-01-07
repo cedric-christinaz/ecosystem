@@ -2,7 +2,6 @@ package com.onlinebox.ecosystem.clients.entity;
 
 import com.onlinebox.ecosystem.util.entity.*;
 import java.io.*;
-import java.util.*;
 import javax.persistence.*;
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
@@ -13,8 +12,9 @@ public class Contact implements IEntity, Serializable {
 	@javax.persistence.JoinColumn(name="t_companyId", referencedColumnName="Id", nullable=false)
 	private Company company;
 	@javax.persistence.OneToMany
-	@javax.persistence.JoinColumn(name="t_contact Id", referencedColumnName="Id", nullable=false)
-	private List<ContactType> role;
+	@javax.persistence.ManyToOne(optional=false)
+	@javax.persistence.JoinColumn(name="t_contact_typeId", referencedColumnName="Id", nullable=false)
+	private ContactType role;
 	@javax.persistence.Id
 	@javax.persistence.GeneratedValue(strategy=GenerationType.IDENTITY)
 	@javax.persistence.Column(name="Id", nullable=false, length=19)
@@ -44,11 +44,11 @@ public class Contact implements IEntity, Serializable {
 		this.company = company;
 	}
 
-	public List<ContactType> getRole() {
+	public ContactType getRole() {
 		return this.role;
 	}
 
-	public void setRole(List<ContactType> role) {
+	public void setRole(ContactType role) {
 		this.role = role;
 	}
 

@@ -1,21 +1,19 @@
-package com.onlinebox.ecosystem.clients.entity;
+package com.onlinebox.ecosystem.projects.entity;
 
 import com.onlinebox.ecosystem.util.entity.*;
 import java.io.*;
-import javax.persistence.*;
+import javax.persistence.NamedQuery;
 
-@NamedQueries({
-    @NamedQuery(name = "ContactType.findAll", query = "select ct from ContactType ct order by ct.name"),})
+@NamedQuery(name = "TaskType.findAll", query = "select t from TaskType t ORDER BY t.name")
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
-@javax.persistence.Table(name="t_contact_type")
-public class ContactType implements IEntity, Serializable {
+@javax.persistence.Table(name="t_task_type")
+public class TaskType implements IEntity, Serializable {
 
 	@javax.persistence.Id
-	@javax.persistence.GeneratedValue(strategy=GenerationType.IDENTITY)
-	@javax.persistence.Column(name="Id", nullable=false, length=19)
+	@javax.persistence.Column(name="Id", nullable=false, length=20)
 	private long id;
-	@javax.persistence.Column(name="Name", nullable=false, length=60)
+	@javax.persistence.Column(name="Name", nullable=false, length=150)
 	private String name;
 	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
 	@javax.persistence.Column(name="CreateDate", nullable=false)
@@ -23,6 +21,8 @@ public class ContactType implements IEntity, Serializable {
 	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
 	@javax.persistence.Column(name="LastUpdateDate", nullable=false)
 	private java.util.Date lastUpdateDate;
+	@javax.persistence.Column(name="HourlyPrice", nullable=false, length=11)
+	private int hourlyPrice;
 
 	public long getId() {
 		return this.id;
@@ -54,6 +54,14 @@ public class ContactType implements IEntity, Serializable {
 
 	public void setLastUpdateDate(java.util.Date lastUpdateDate) {
 		this.lastUpdateDate = lastUpdateDate;
+	}
+
+	public int getHourlyPrice() {
+		return this.hourlyPrice;
+	}
+
+	public void setHourlyPrice(int hourlyPrice) {
+		this.hourlyPrice = hourlyPrice;
 	}
 
 }

@@ -9,21 +9,29 @@
     <h:head>
         <title>ecosystem : Clients Management and Time Tracking</title>
         <h:outputStylesheet library="css" name="style.css"/>
+
+        <style>
+            #test{
+                vertical-align: bottom;
+            }
+        </style>
+
     </h:head>
     <h:body>
 
         <ui:include src="include/header.xhtml"/>
         <h:form>
             <p:tabMenu activeIndex="0">
-                <p:menuitem value="Dashboard" icon="icon-dashboard" outcome="dashboard_view"/>
-                <p:menuitem value="Projects" icon="icon-project" outcome="projects_view"/>
-                <p:menuitem value="Clients" icon="icon-client" outcome="clients_view"/>
-                <p:menuitem value="Employees" icon="icon-employee" outcome="users_view"/>
-                <p:menuitem value="Parameters" icon="icon-parameter" outcome="parameters_view"/>
+                <p:menuitem value="Dashboard" icon="icon-dashboard" outcome="dashboard_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Time Tracking" icon="icon-timetracking" outcome="timetracking_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Projects" icon="icon-project" outcome="projects_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Clients" icon="icon-client" outcome="clients_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Employees" icon="icon-employee" outcome="users_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Parameters" icon="icon-parameter" outcome="parameters_view" styleClass="ui-my-menu"/>
             </p:tabMenu>
         </h:form>
         <p:panel id="mainPanel" style="height:400px;">
-            dashboard_view!
+          Dashboard
         </p:panel>
     </h:body>
 </html>

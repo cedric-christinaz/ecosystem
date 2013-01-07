@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <h:head>
+        <title>ecosystem : Clients Management and Time Tracking</title>
+        <h:outputStylesheet library="css" name="style.css"/>
+
+        <style>
+            #test{
+                vertical-align: bottom;
+            }
+        </style>
+
+    </h:head>
+    <h:body>
+
+        <ui:include src="include/header.xhtml"/>
+        <h:form>
+            <p:tabMenu activeIndex="1">
+                <p:menuitem value="Dashboard" icon="icon-dashboard" outcome="dashboard_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Time Tracking" icon="icon-timetracking" outcome="timetracking_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Projects" icon="icon-project" outcome="projects_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Clients" icon="icon-client" outcome="clients_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Employees" icon="icon-employee" outcome="users_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Parameters" icon="icon-parameter" outcome="parameters_view" styleClass="ui-my-menu"/>
+            </p:tabMenu>
+        </h:form>
+        <p:panel id="mainPanel">
+
+            <!-- Add Task Popup -->
+            <h:form id="fAddTask">
+                <p:dialog id="wAddTask" widgetVar="wAddTask" header="Add Task" resizable="false" modal="true" >        
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelAddTask" columns="1">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Project : * "/>
+                            <p:autoComplete value="#{taskController.task.project}" completeMethod="#{projectController.searchProject}" minQueryLength="3"
+                                            var="project" itemLabel="#{project.name}" itemValue="#{project}" size="63" 
+                                            converter="#{projectConverter}" converterMessage="The Project does not exist." />   
+
+                            <p:outputLabel value="Date : * "/>
+                            <p:calendar value="#{taskController.task.taskDate}" pattern="dd.MM.yyyy"/>  
+
+                            <p:outputLabel value="Duration : * "/>
+                            <p:inputMask value="#{taskController.task.duration}" mask="99:99" converter="#{durationConverter}" converterMessage="Duration format not correct."/>                                      
+
+                            <p:outputLabel value="Task Type : * "/>
+                            <p:selectOneMenu value="#{taskController.task.taskType.id}" style="width: 100px;">               
+                                <f:selectItems value="#{taskTypeController.taskTypes}" var="taskType" itemLabel="#{taskType.name}" itemValue="#{taskType.id}"/>
+                            </p:selectOneMenu> 
+
+                            <p:outputLabel value="Remark : "/>
+                            <p:inputTextarea rows="3" cols="66" maxlength="255" value="#{taskController.task.remark}"/>  
+
+                        </h:panelGrid>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="OK" action="#{taskController.saveTask}" update=":fTasks:taTasks" oncomplete="handleDialogClose(xhr, status, args)"/>                                                 
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wAddTask.hide();"/>
+                        </h:panelGrid>  
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            
+             <!-- Edit Task Popup -->
+            <h:form id="fTaskDetails">
+                <p:dialog id="wTaskDetails" widgetVar="wTaskDetails" header="Edit Task" resizable="false" modal="true" >        
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelEditTask" columns="1">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Project : * "/>
+                            <p:autoComplete value="#{taskController.task.project}" completeMethod="#{projectController.searchProject}" minQueryLength="3"
+                                            var="project" itemLabel="#{project.name}" itemValue="#{project}" 
+                                            converter="#{projectConverter}" converterMessage="The Project does not exist." />   
+
+                            <p:outputLabel value="Date : * "/>
+                            <p:calendar value="#{taskController.task.taskDate}" pattern="dd.MM.yyyy"/>  
+
+                            <p:outputLabel value="Duration : * "/>
+                            <p:inputMask value="#{taskController.task.duration}" mask="99:99" converter="#{durationConverter}" converterMessage="Duration format not correct."/>                                      
+
+                            <p:outputLabel value="Task Type : * "/>
+                            <p:selectOneMenu value="#{taskController.task.taskType.id}" style="width: 100px;">               
+                                <f:selectItems value="#{taskTypeController.taskTypes}" var="taskType" itemLabel="#{taskType.name}" itemValue="#{taskType.id}"/>
+                            </p:selectOneMenu> 
+
+                            <p:outputLabel value="Remark : "/>
+                            <p:inputTextarea rows="3" cols="66" maxlength="255" value="#{taskController.task.remark}"/>  
+
+                        </h:panelGrid>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="OK" action="#{taskController.saveTask}" update=":fTasks:taTasks" oncomplete="handleDialogClose(xhr, status, args)"/>                                                 
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wTaskDetails.hide();"/>
+                        </h:panelGrid>  
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            
+             <!-- Delete Task Popup -->
+            <h:form>
+                <p:confirmDialog id="wDeleteTask" widgetVar="wDeleteTask" header="Delete Task" message="Do you really want to delete permanently this task?"  severity="alert" >
+                    <p:commandButton value="Yes" update=":fTasks:taTasks" oncomplete="wDeleteTask.hide()"  
+                                     actionListener="#{taskController.deleteTask()}"/>
+                    <p:commandButton  value="No" onclick="wDeleteTask.hide()" type="button" />  
+                </p:confirmDialog>
+            </h:form>
+
+            <!-- ************************************************************************************* -->
+            <!-- Main Tasks View -->
+            <h:form id="fTasks">
+
+
+                <div style="margin-bottom:10px;;margin-top:10px;">
+                    <p:commandButton icon="ui-icon-plus" value="Add Task" update=":fAddTask:panelAddTask" oncomplete="wAddTask.show()" action="#{taskController.resetTask()}" >
+                        <p:resetInput target=":fAddTask:panelAddTask"/>
+                    </p:commandButton>
+                </div>
+                <!-- Tasks List -->
+                <p:dataTable id="taTasks" var="task" value="#{taskController.tasks}">                                    
+                    <p:column headerText="Date">
+                        <h:outputText value="#{task.taskDate}">
+                            <f:convertDateTime pattern="dd.MM.yyyy"/>
+                        </h:outputText>
+                    </p:column>      
+                    <p:column headerText="Duration">
+                        <h:outputText value="#{task.duration}" converter="#{durationConverter}"/>                                         
+                    </p:column>      
+                    <p:column headerText="Client">
+                        #{task.project.company.name}
+                    </p:column>        
+                    <p:column headerText="Project">
+                        #{task.project.name}
+                    </p:column>        
+                    <p:column headerText="Task">
+                        #{task.taskType.name}
+                    </p:column>          
+                    <p:column headerText="Remark">
+                        #{task.remark}
+                    </p:column>    
+
+                    <!-- Row button to edit a task -->
+                    <p:column style="width:16px;">
+                        <p:commandButton id="buEditTask" icon="ui-icon-pencil" title="Modify" update=":fTaskDetails:panelEditTask" oncomplete="wTaskDetails.show()">  
+                            <f:setPropertyActionListener value="#{task}" target="#{taskController.task}" />     
+                            <p:resetInput target=":fTaskDetails:panelEditTask"/>
+                        </p:commandButton>  
+                    </p:column>
+
+                    <!-- Row button to delete a task -->
+                    <p:column style="width:16px;">
+                        <p:commandButton id="buDeleteTask" icon="ui-icon-trash" title="Delete" oncomplete="wDeleteTask.show()">  
+                            <f:setPropertyActionListener value="#{task}" target="#{taskController.task}" />               
+                        </p:commandButton>  
+                    </p:column>
+
+                </p:dataTable>
+
+            </h:form>
+        </p:panel>
+        
+        <script type="text/javascript">  
+            //<![CDATA[
+            function handleDialogClose(xhr, status, args) {  
+                if(!args.validationFailed && args.isOk) {                         
+                    wAddTask.hide();       
+                    wTaskDetails.hide();
+                }  
+            }           
+            //]]>
+        </script>     
+        
+    </h:body>
+</html>
+

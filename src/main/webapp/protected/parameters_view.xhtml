@@ -14,17 +14,267 @@
 
         <ui:include src="include/header.xhtml"/>
         <h:form>
-            <p:tabMenu activeIndex="0">
-                <p:menuitem value="Dashboard" icon="icon-dashboard" outcome="dashboard_view"/>
-                <p:menuitem value="Projects" icon="icon-project" outcome="projects_view"/>
-                <p:menuitem value="Clients" icon="icon-client" outcome="clients_view"/>
-                <p:menuitem value="Employees" icon="icon-employee" outcome="users_view"/>
-                <p:menuitem value="Parameters" icon="icon-parameter" outcome="parameters_view"/>
+            <p:tabMenu activeIndex="5">
+                <p:menuitem value="Dashboard" icon="icon-dashboard" outcome="dashboard_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Time Tracking" icon="icon-timetracking" outcome="timetracking_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Projects" icon="icon-project" outcome="projects_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Clients" icon="icon-client" outcome="clients_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Employees" icon="icon-employee" outcome="users_view" styleClass="ui-my-menu"/>
+                <p:menuitem value="Parameters" icon="icon-parameter" outcome="parameters_view" styleClass="ui-my-menu"/>
             </p:tabMenu>
         </h:form>
-        <p:panel id="mainPanel" style="height:400px;">
-            parameter view!
+        <p:panel id="mainPanel">
+
+
+            <!-- Add Task Type Popup -->
+            <h:form id="fAddTaskType">
+                <p:dialog id="wAddTaskType" widgetVar="wAddTaskType" header="Add Task Type" resizable="false" modal="true" >                        
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelAddTaskType" columns="1">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Name : * "/><p:inputText  value="#{taskTypeController.taskType.name}" size="60" maxlength="100" required="true" requiredMessage="Name is required."/>
+                            <p:outputLabel value="Hourly Price : * "/><p:inputText  value="#{taskTypeController.taskType.hourlyPrice}" size="6" maxlength="10" required="true" requiredMessage="Hourly Price is required." converterMessage="Hourly Price must be a number."/>
+                        </h:panelGrid>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="Save" action="#{taskTypeController.saveTaskType}" update=":fParameters:tabParameters:taTaskTypes" oncomplete="handleDialogClose(xhr, status, args)"/>                                                 
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wAddTaskType.hide();"/>
+                        </h:panelGrid>  
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            <!-- Edit Task Type Popup -->
+            <h:form id="fTaskTypeDetails">
+                <p:dialog id="wTaskTypeDetails" widgetVar="wTaskTypeDetails" header="Edit Task Type" resizable="false" modal="true" >     
+                    <p:ajax event="close" listener="#{taskTypeController.resetTaskType()}"/> 
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelEditTaskType" columns="1">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Name : * "/><p:inputText  value="#{taskTypeController.taskType.name}" size="60" maxlength="100" required="true" requiredMessage="Name is required."/>
+                            <p:outputLabel value="Hourly Price : * "/><p:inputText  value="#{taskTypeController.taskType.hourlyPrice}" size="6" maxlength="10" required="true" requiredMessage="Hourly Price is required." converterMessage="Hourly Price must be a number."/>
+                        </h:panelGrid>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="Save" action="#{taskTypeController.saveTaskType}" update=":fParameters:tabParameters:taTaskTypes" oncomplete="handleDialogClose(xhr, status, args)"/>                                                 
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wTaskTypeDetails.hide();"/>
+                        </h:panelGrid>  
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+
+            <!-- Delete Task Type Popup -->
+            <h:form>
+                <p:confirmDialog id="wDeleteTaskType" widgetVar="wDeleteTaskType" header="Delete Task Type" message="Do you really want to delete permanently this task type?"  severity="alert" >
+                    <p:commandButton value="Yes" update=":fParameters:tabParameters:taTaskTypes" oncomplete="wDeleteTaskType.hide()"  
+                                     actionListener="#{taskTypeController.deleteTaskType()}"/>
+                    <p:commandButton  value="No" onclick="wDeleteTaskType.hide()" type="button" />  
+                </p:confirmDialog>
+            </h:form>
+
+
+
+
+
+            <!-- Add Contact Type Popup -->
+            <h:form id="fAddContactType">
+                <p:dialog id="wAddContactType" widgetVar="wAddContactType" header="Add Contact Role" resizable="false" modal="true" >                        
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelAddContatRole" columns="1">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Name : * "/><p:inputText  value="#{contactTypeController.contactType.name}" size="60" maxlength="100" required="true" requiredMessage="Name is required."/>
+                        </h:panelGrid>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="Save" action="#{contactTypeController.saveContactType}" update=":fParameters:tabParameters:taContactRoles" oncomplete="handleDialogClose(xhr, status, args)"/>                                                 
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wAddContactType.hide();"/>
+                        </h:panelGrid>  
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            <!-- Edit Contact Type Popup -->
+            <h:form id="fContactTypeDetails">
+                <p:dialog id="wContactTypeDetails" widgetVar="wContactTypeDetails" header="Edit Contact Role" resizable="false" modal="true" >     
+                    <p:ajax event="close" listener="#{contactTypeController.resetContactType()}"/> 
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelEditContactType" columns="1">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Name : * "/><p:inputText  value="#{contactTypeController.contactType.name}" size="60" maxlength="100" required="true" requiredMessage="Name is required."/>
+                        </h:panelGrid>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="Save" action="#{contactTypeController.saveContactType}" update=":fParameters:tabParameters:taContactRoles" oncomplete="handleDialogClose(xhr, status, args)"/>                                                 
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wContactTypeDetails.hide();"/>
+                        </h:panelGrid>  
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+
+            <!-- Delete Contact Type Popup -->
+            <h:form>
+                <p:confirmDialog id="wDeleteContactType" widgetVar="wDeleteContactType" header="Delete Contact Role" message="Do you really want to delete permanently this role?"  severity="alert" >
+                    <p:commandButton value="Yes" update=":fParameters:tabParameters:taContactRoles" oncomplete="wDeleteContactType.hide()"  
+                                     actionListener="#{contactTypeController.deleteContactType()}"/>
+                    <p:commandButton  value="No" onclick="wDeleteContactType.hide()" type="button" />  
+                </p:confirmDialog>
+            </h:form>
+
+
+
+            <!-- Add User Job Popup -->
+            <h:form id="fAddUserJob">
+                <p:dialog id="wAddUserJob" widgetVar="wAddUserJob" header="Add Employee Job" resizable="false" modal="true" >                        
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelAddUserJob" columns="1">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Name : * "/><p:inputText  value="#{userJobController.userJob.name}" size="60" maxlength="100" required="true" requiredMessage="Name is required."/>
+                        </h:panelGrid>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="Save" action="#{userJobController.saveUserJob}" update=":fParameters:tabParameters:taUserJobs" oncomplete="handleDialogClose(xhr, status, args)"/>                                                 
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wAddUserJob.hide();"/>
+                        </h:panelGrid>  
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            <!-- Edit User Job Popup -->
+            <h:form id="fUserJobDetails">
+                <p:dialog id="wUserJobDetails" widgetVar="wUserJobDetails" header="Edit Employee Job" resizable="false" modal="true" >     
+                    <p:ajax event="close" listener="#{userJobController.resetUserJob()}"/> 
+                    <p:messages autoUpdate="true" severity="error, severe, fatal" />
+                    <h:panelGrid id="panelEditUserJob" columns="1">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Name : * "/><p:inputText  value="#{userJobController.userJob.name}" size="60" maxlength="100" required="true" requiredMessage="Name is required."/>
+                        </h:panelGrid>
+                        <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
+                            <p:commandButton icon="ui-icon-disk" value="Save" action="#{userJobController.saveUserJob}" update=":fParameters:tabParameters:taUserJobs" oncomplete="handleDialogClose(xhr, status, args)"/>                                                 
+                            <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wUserJobDetails.hide();"/>
+                        </h:panelGrid>  
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+
+            <!-- Delete User Job Popup -->
+            <h:form>
+                <p:confirmDialog id="wDeleteUserJob" widgetVar="wDeleteUserJob" header="Delete Employee Job" message="Do you really want to delete permanently this job?"  severity="alert" >
+                    <p:commandButton value="Yes" update=":fParameters:tabParameters:taUserJobs" oncomplete="wDeleteUserJob.hide()"  
+                                     actionListener="#{userJobController.deleteUserJob()}"/>
+                    <p:commandButton  value="No" onclick="wDeleteUserJob.hide()" type="button" />  
+                </p:confirmDialog>
+            </h:form>
+
+
+            <!-- ************************************************************************************* -->
+            <!-- Main Parameters View -->
+            <h:form id="fParameters">
+                <p:tabView id="tabParameters">
+                    <p:tab id="tabTaskType" title="Task Types">  
+                        <!-- Action button to :
+                              1. add a task type
+                        -->
+                        <div style="margin-bottom:10px;margin-top:10px;">
+                            <p:commandButton icon="ui-icon-plus" value="Add Task Type" update=":fAddTaskType:panelAddTaskType" oncomplete="wAddTaskType.show()" action="#{taskTypeController.resetTaskType()}" rendered="#{facesContext.externalContext.isUserInRole('ADMIN')}">
+                                <p:resetInput target=":fAddTaskType:panelAddTaskType"/>
+                            </p:commandButton>
+                        </div>
+                        <p:dataTable id="taTaskTypes" var="tasktype" value="#{taskTypeController.taskTypes}">                                    
+                            <p:column headerText="Name">
+                                #{tasktype.name}
+                            </p:column> 
+                            <p:column headerText="Hourly Price" style="width:100px;">
+                                #{tasktype.hourlyPrice}
+                            </p:column> 
+                            <!-- Row button to edit a task type -->
+                            <p:column style="width:16px;" rendered="#{facesContext.externalContext.isUserInRole('ADMIN')}">
+                                <p:commandButton id="buEditTaskType" icon="ui-icon-pencil" title="Modify" update=":fTaskTypeDetails:panelEditTaskType" oncomplete="wTaskTypeDetails.show()">  
+                                    <f:setPropertyActionListener value="#{tasktype}" target="#{taskTypeController.taskType}" />     
+                                    <p:resetInput target=":fTaskTypeDetails:panelEditTaskType"/>
+                                </p:commandButton>  
+                            </p:column>
+
+                            <!-- Row button to delete a task type -->
+                            <p:column style="width:16px;" rendered="#{facesContext.externalContext.isUserInRole('ADMIN')}">
+                                <p:commandButton id="buDeleteTaskType" icon="ui-icon-trash" title="Delete" oncomplete="wDeleteTaskType.show()">  
+                                    <f:setPropertyActionListener value="#{tasktype}" target="#{taskTypeController.taskType}" />                      
+                                </p:commandButton>  
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:tab>     
+                    <p:tab id="tabContactRole" title="Contact Roles">  
+                        <!-- Action button to :
+                              1. add a contact role
+                        -->
+                        <div style="margin-bottom:10px;margin-top:10px;">
+                            <p:commandButton icon="ui-icon-plus" value="Add Role" update=":fAddContactType:panelAddContatRole" oncomplete="wAddContactType.show()" action="#{contactTypeController.resetContactType()}" rendered="#{facesContext.externalContext.isUserInRole('ADMIN')}">
+                                <p:resetInput target=":fAddContactType:panelAddContatRole"/>
+                            </p:commandButton>
+                        </div>
+                        <p:dataTable id="taContactRoles" var="contacttype" value="#{contactTypeController.contactTypes}">                                    
+                            <p:column headerText="Name">
+                                #{contacttype.name}
+                            </p:column>  
+                            <!-- Row button to edit a contact type -->
+                            <p:column style="width:16px;" rendered="#{facesContext.externalContext.isUserInRole('ADMIN')}">
+                                <p:commandButton id="buEditContactType" icon="ui-icon-pencil" title="Modify" update=":fContactTypeDetails:panelEditContactType" oncomplete="wContactTypeDetails.show()">  
+                                    <f:setPropertyActionListener value="#{contacttype}" target="#{contactTypeController.contactType}" />     
+                                    <p:resetInput target=":fContactTypeDetails:panelEditContactType"/>
+                                </p:commandButton>  
+                            </p:column>
+
+                            <!-- Row button to delete a contact type -->
+                            <p:column style="width:16px;" rendered="#{facesContext.externalContext.isUserInRole('ADMIN')}">
+                                <p:commandButton id="buDeleteContactType" icon="ui-icon-trash" title="Delete" oncomplete="wDeleteContactType.show()">  
+                                    <f:setPropertyActionListener value="#{contacttype}" target="#{contactTypeController.contactType}" />                      
+                                </p:commandButton>  
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>   
+                    <p:tab id="tabUserJob" title="Employee Jobs">
+                        <!-- Action button to :
+                               1. add a user job
+                        -->
+                        <div style="margin-bottom:10px;margin-top:10px;">
+                            <p:commandButton icon="ui-icon-plus" value="Add Job" update=":fAddUserJob:panelAddUserJob" oncomplete="wAddUserJob.show()" action="#{userJobController.resetUserJob()}" rendered="#{facesContext.externalContext.isUserInRole('ADMIN')}">
+                                <p:resetInput target=":fAddUserJob:panelAddUserJob"/>
+                            </p:commandButton>
+                        </div>
+                        <p:dataTable id="taUserJobs" var="userjob" value="#{userJobController.userJobs}">                                    
+                            <p:column headerText="Name">
+                                #{userjob.name}
+                            </p:column>    
+                            <!-- Row button to edit a User Job -->
+                            <p:column style="width:16px;" rendered="#{facesContext.externalContext.isUserInRole('ADMIN')}">
+                                <p:commandButton id="buEditUserJob" icon="ui-icon-pencil" title="Modify" update=":fUserJobDetails:panelEditUserJob" oncomplete="wUserJobDetails.show()">  
+                                    <f:setPropertyActionListener value="#{userjob}" target="#{userJobController.userJob}" />     
+                                    <p:resetInput target=":fUserJobDetails:panelEditUserJob"/>
+                                </p:commandButton>  
+                            </p:column>
+
+                            <!-- Row button to delete a User Job -->
+                            <p:column style="width:16px;" rendered="#{facesContext.externalContext.isUserInRole('ADMIN')}">
+                                <p:commandButton id="buDeleteUserJob" icon="ui-icon-trash" title="Delete" oncomplete="wDeleteUserJob.show()">  
+                                    <f:setPropertyActionListener value="#{userjob}" target="#{userJobController.userJob}" />                      
+                                </p:commandButton>  
+                            </p:column>
+                        </p:dataTable>
+
+                    </p:tab>
+
+
+                </p:tabView>
+            </h:form>
         </p:panel>
+
+        <script type="text/javascript">  
+            //<![CDATA[
+            function handleDialogClose(xhr, status, args) {  
+                if(!args.validationFailed && args.isOk) {                         
+                    wUserJobDetails.hide();       
+                    wAddUserJob.hide();
+                    wAddContactType.hide();
+                    wContactTypeDetails.hide();
+                    wAddTaskType.hide();
+                    wTaskTypeDetails.hide();
+                }  
+            }           
+            //]]>
+        </script>  
+
     </h:body>
 </html>
 
