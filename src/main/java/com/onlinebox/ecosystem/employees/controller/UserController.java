@@ -264,6 +264,8 @@ public class UserController implements Serializable {
      * Private method that modifies an existing user. It is called by the method saveUser().
      */
     private void updateUser() throws Exception {
+        user.setAccessLevel(accessLevelBean.get(user.getAccessLevel().getId()));
+        user.setJob(jobBean.get(user.getJob().getId()));
         user = this.userBean.update(user);
     }
 
