@@ -11,7 +11,7 @@
         <h:outputStylesheet library="css" name="style.css"/>
 
         <style type="text/css">
-            .ui-autocomplete input{
+            .ui-autocomplete-company input{
                 width:330px;
             }
         </style>
@@ -69,8 +69,8 @@
                         <h:panelGrid columns="2">
                             <p:outputLabel value="Project Name : * "/><p:inputText id="txCompanyName" value="#{projectController.project.name}" size="60" maxlength="100" required="true" requiredMessage="Project Name is required."/>
                             <p:outputLabel value="Client Name : * "/>
-                            <p:autoComplete value="#{projectController.project.company}" completeMethod="#{clientController.searchClient}" minQueryLength="3"
-                                            var="company" itemLabel="#{company.name}" itemValue="#{company}" 
+                            <p:autoComplete value="#{projectController.project.company}" completeMethod="#{clientController.searchClient}" minQueryLength="3" styleClass="ui-autocomplete-company"
+                                            forceSelection="true" var="company" itemLabel="#{company.name}" itemValue="#{company}" 
                                             converter="#{companyConverter}" converterMessage="The Client does not exist." />                                          
                             <p:outputLabel value="Estimated Hours : "/><p:inputText value="#{projectController.project.estimatedHour}" converterMessage="Estimated Hours must be a number."/>       
                         </h:panelGrid>

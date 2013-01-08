@@ -1,4 +1,3 @@
-
 package com.onlinebox.ecosystem.projects.controller;
 
 import com.onlinebox.ecosystem.clients.entity.Company;
@@ -7,7 +6,10 @@ import com.onlinebox.ecosystem.projects.bean.ProjectManagerBean;
 import com.onlinebox.ecosystem.projects.bean.TaskTypeManagerBean;
 import com.onlinebox.ecosystem.projects.entity.Project;
 import com.onlinebox.ecosystem.projects.entity.Task;
+import com.onlinebox.ecosystem.util.entity.IEntity;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -27,7 +29,7 @@ import org.primefaces.context.RequestContext;
 @ViewScoped
 public class ProjectController {
 
-    @ManagedProperty(value="#{userSessionController.user}")
+    @ManagedProperty(value = "#{userSessionController.user}")
     private User user;
     @EJB
     private ProjectManagerBean projectBean;
@@ -53,7 +55,24 @@ public class ProjectController {
      */
     @PostConstruct
     void init() {
-        projects = projectBean.getAll();
+        long idProjectSearch = 0;
+
+        Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        if (parameters != null) {
+            String sId = parameters.get("id");
+            if (sId != null && !sId.equals("")) {
+                idProjectSearch = Long.parseLong(sId);
+            }
+        }
+
+        if (idProjectSearch > 0) {
+            projects = new ArrayList<Project>();
+            projects.add(projectBean.get(idProjectSearch));
+        } else {
+            projects = projectBean.getAll();
+        }
+
+
     }
 
     public List<Project> getProjects() {
@@ -172,6 +191,7 @@ public class ProjectController {
 
     /**
      * This method computes the total of worked hours for the project specified in parameter.
+     *
      * @param pProject
      * @return number of worked hours for the project
      */
@@ -192,15 +212,14 @@ public class ProjectController {
     public void setUser(User user) {
         this.user = user;
     }
-    
-    
+
     /**
      * This methods returns a list of Project that match the specified parameter.
-     * @param query  part of the name of the projects to return
-     * @return list of project that match the search   
+     *
+     * @param query part of the name of the projects to return
+     * @return list of project that match the search
      */
-    public List<Project> searchProject(String query){
-         return projectBean.findAllByName(query);
+    public List<IEntity> searchProject(String query) {
+        return projectBean.findAllByName(query);
     }
-    
 }

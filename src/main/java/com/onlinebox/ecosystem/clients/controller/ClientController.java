@@ -14,13 +14,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
@@ -31,7 +32,7 @@ import org.primefaces.model.UploadedFile;
  * @author cedric
  */
 @ManagedBean
-@SessionScoped
+@ViewScoped
 public class ClientController {
 
     @EJB
@@ -60,7 +61,24 @@ public class ClientController {
      */
     @PostConstruct
     void init() {
-        companies = clientBean.getAll();
+        
+        long idClientSearch = 0;
+
+        Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        if (parameters != null) {
+            String sId = parameters.get("id");
+            if (sId != null && !sId.equals("")) {
+                idClientSearch = Long.parseLong(sId);
+            }
+        }
+        
+        if (idClientSearch > 0) {
+            companies = new ArrayList<Company>();
+            companies.add(clientBean.get(idClientSearch));
+        } else {
+            companies = clientBean.getAll();
+        }
+        
     }
 
     public List<Company> getCompanies() {
@@ -294,17 +312,8 @@ public class ClientController {
      * @param query
      * @return 
      */
-    public List<Company> searchClient(String query){
-        
-        List<Company> res = new ArrayList<Company>();
-        
-        for(Company company : this.companies){
-            if(company.getName().toLowerCase().startsWith(query.toLowerCase())){
-                res.add(company);
-            }
-        }
-        return res;
-  
+    public List<Company> searchClient(String query){       
+      return clientBean.findAllByName(query);
     }
 
     public Contact getNewContact() {

@@ -90,4 +90,8 @@ public class Project implements IEntity, Serializable {
     public void setLastUpdateDate(java.util.Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
+    
+    public String toString(){
+        return this.getName();
+    }
 }

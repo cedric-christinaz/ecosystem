@@ -54,6 +54,12 @@ public class CompanyManagerBean {
         return em.find(Company.class, id);
     }
 
+    public java.util.List<Company> findAllByName(String name) {
+        Query query = em.createNamedQuery("Company.findAllByName");
+        query.setParameter("clientName", "%" + name + "%");
+        return query.getResultList();
+    }
+
     /**
      *
      * @param contact

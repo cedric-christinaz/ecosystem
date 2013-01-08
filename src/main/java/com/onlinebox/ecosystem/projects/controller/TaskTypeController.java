@@ -120,7 +120,6 @@ public class TaskTypeController {
             taskTypes.remove(taskType);
         }
     }
-    
-    
+ 
     
 }

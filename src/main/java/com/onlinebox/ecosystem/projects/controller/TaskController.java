@@ -1,6 +1,6 @@
-
 package com.onlinebox.ecosystem.projects.controller;
 
+import com.onlinebox.ecosystem.employees.bean.UserManagerBean;
 import com.onlinebox.ecosystem.employees.entity.User;
 import com.onlinebox.ecosystem.projects.bean.TaskManagerBean;
 import com.onlinebox.ecosystem.projects.bean.TaskTypeManagerBean;
@@ -32,8 +32,11 @@ public class TaskController {
     private TaskManagerBean taskBean;
     @EJB
     private TaskTypeManagerBean taskTypeBean;
+    @EJB
+    private UserManagerBean userBean;
     private List<Task> tasks;
     private Task task;
+    private User selectedUser;
 
     /**
      * Creates a new instance of TaskController
@@ -49,6 +52,7 @@ public class TaskController {
     @PostConstruct
     void init() {
         tasks = taskBean.getByUser(user);
+        selectedUser = user;
     }
 
     public List<Task> getTasks() {
@@ -114,7 +118,7 @@ public class TaskController {
      * Private method that creates a new task. It is called by the method saveTask().
      */
     private void createTask() throws Exception {
-        task.setUser(user);
+        task.setUser(selectedUser);
         task.setTaskType(taskTypeBean.get(task.getTaskType().getId()));
         task = this.taskBean.create(task);
         tasks.add(task);
@@ -146,5 +150,21 @@ public class TaskController {
             taskBean.delete(task);
             tasks.remove(task);
         }
+    }
+
+    public List<User> getAllUsers() {
+        return userBean.getAll();
+    }
+
+    public User getSelectedUser() {
+        return selectedUser;
+    }
+
+    public void setSelectedUser(User selectedUser) {
+        this.selectedUser = selectedUser;
+    }
+
+    public void handleUserSelection() {
+        tasks = taskBean.getByUser(selectedUser);
     }
 }

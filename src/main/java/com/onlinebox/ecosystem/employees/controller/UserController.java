@@ -12,7 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -63,11 +65,29 @@ public class UserController implements Serializable {
     @PostConstruct
     void init() {
         try {
+
+            long idUserSearch = 0;
+
             displayTempPicture = false;
             activeUsers = userBean.getAllActiveUsers();
             disabledUsers = userBean.getAllDisabledUsers();
-            users = activeUsers;
+
             isActiveUsers = true;
+
+            Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+            if (parameters != null) {
+                String sId = parameters.get("id");
+                if (sId != null && !sId.equals("")) {
+                    idUserSearch = Long.parseLong(sId);
+                }
+            }
+
+            if (idUserSearch > 0) {
+                users = new ArrayList<User>();
+                users.add(userBean.get(idUserSearch));
+            } else {
+                users = activeUsers;
+            }
 
             Path target = Paths.get("/var/www/ecosystem/pubimg/defaultuser.png");
             if (!Files.exists(target)) {

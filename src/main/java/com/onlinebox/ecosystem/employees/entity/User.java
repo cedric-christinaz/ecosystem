@@ -1,20 +1,21 @@
 package com.onlinebox.ecosystem.employees.entity;
 
+import com.onlinebox.ecosystem.projects.entity.Task;
 import com.onlinebox.ecosystem.util.entity.*;
 import java.io.*;
-import javax.persistence.*;
 import java.util.*;
-import com.onlinebox.ecosystem.projects.entity.*;
+import javax.persistence.*;
 
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "select u from User u order by u.lastname, u.firstname"),
     @NamedQuery(name = "User.findActive", query = "select u from User u WHERE u.isActive = true order by u.lastname, u.firstname"),
     @NamedQuery(name = "User.findDisabled", query = "select u from User u WHERE u.isActive = false order by u.lastname, u.firstname"),
-    @NamedQuery(name = "User.findByUsername", query = "select u from User u WHERE u.username = :username")
+    @NamedQuery(name = "User.findByUsername", query = "select u from User u WHERE u.username = :username"),
+    @NamedQuery(name = "User.findAllByName", query = "select u from User u WHERE u.firstname LIKE :firstname OR u.lastname LIKE :lastname ORDER BY u.lastname, u.firstname")
 })
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
-@javax.persistence.Table(name="t_user")
+@javax.persistence.Table(name = "t_user")
 public class User implements IEntity, Serializable {
 
     @javax.persistence.OneToOne(optional = false)
@@ -33,8 +34,8 @@ public class User implements IEntity, Serializable {
     private String lastname;
     @javax.persistence.Column(name = "Email", length = 100)
     private String email;
-	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-	@javax.persistence.Column(name="Birthday")
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @javax.persistence.Column(name = "Birthday")
     private java.util.Date birthday;
     @javax.persistence.Column(name = "Steet", length = 100)
     private String steet;
@@ -44,10 +45,10 @@ public class User implements IEntity, Serializable {
     private String city;
     @javax.persistence.Column(name = "IsActive", nullable = false)
     private boolean isActive;
-    @javax.persistence.Column(name="Image", length=100)
+    @javax.persistence.Column(name = "Image", length = 100)
     private String image;
-	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-	@javax.persistence.Column(name="LastLogin")
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @javax.persistence.Column(name = "LastLogin")
     private java.util.Date lastLogin;
     @javax.persistence.Column(name = "PhoneHome", length = 20)
     private String phoneHome;
@@ -55,19 +56,19 @@ public class User implements IEntity, Serializable {
     private String phoneOffice;
     @javax.persistence.Column(name = "PhoneMobile", length = 20)
     private String phoneMobile;
-	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-	@javax.persistence.Column(name="CreateDate", nullable=false)
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @javax.persistence.Column(name = "CreateDate", nullable = false)
     private java.util.Date createDate;
-	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-	@javax.persistence.Column(name="LastUpdateDate", nullable=false)
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @javax.persistence.Column(name = "LastUpdateDate", nullable = false)
     private java.util.Date lastUpdateDate;
     @javax.persistence.Column(name = "Username", unique = true, nullable = false, length = 120)
     private String username;
     @javax.persistence.Column(name = "Password", nullable = false, length = 128)
     private String password;
-	@javax.persistence.OneToMany(mappedBy="user")
-	@javax.persistence.JoinColumn(name="t_userId", referencedColumnName="Id", nullable=false)
-	private List<Task> tasks;
+    @javax.persistence.OneToMany(mappedBy = "user")
+    @javax.persistence.JoinColumn(name = "t_userId", referencedColumnName = "Id", nullable = false)
+    private List<Task> tasks;
 
     public User() {
         this.setAccessLevel(new AccessLevel());
@@ -240,11 +241,39 @@ public class User implements IEntity, Serializable {
         this.password = password;
     }
 
-	public List<Task> getTasks() {
-		return this.tasks;
-	}
+    public List<Task> getTasks() {
+        return this.tasks;
+    }
 
-	public void setTasks(List<Task> tasks) {
-		this.tasks = tasks;
-	}
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+
+    public String toString() {
+        return this.getFirstname() + " " + this.getLastname();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final User other = (User) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

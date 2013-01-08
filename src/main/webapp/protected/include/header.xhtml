@@ -8,13 +8,28 @@
                 xmlns:c="http://java.sun.com/jsp/jstl/core">
 
     <h:form>
-        <h:panelGrid columns="1" width="100%" style="text-align: right;">          
-            <p:panel style="border:none;margin:0px;padding:0px;">
-                <p:outputLabel value="#{userSessionController.user.firstname} #{userSessionController.user.lastname}" style="margin-right:1px;"/>    
-                &#124;
-                <p:commandLink value="Logout" action="#{userSessionController.logout}" style="margin-left:1px;"/>   
-            </p:panel>
-        </h:panelGrid>
+        <div style="border: none;margin-bottom:10px;margin-top:10px;text-align: right;" class="ui-widget ui-widget-content">
+
+            <p:outputLabel value="#{userSessionController.user.firstname} #{userSessionController.user.lastname}" style="margin-right:1px;"/>    
+            &#124;
+            <p:commandLink value="Logout" action="#{userSessionController.logout}" style="margin-left:1px;margin-right:1px;"/>   
+            &#124;
+            <p:autoComplete style="margin-left:5px;" id="txSearch" size="50" completeMethod="#{searchController.search}" minQueryLength="3"
+                            var="result" itemValue="#{result}"
+                            converter="#{searchConverter}" converterMessage="No result found.">
+                <p:ajax event="itemSelect" listener="#{searchController.handleSelect}"/>  
+                <p:column style="border:none;width:16px;">
+                    <p:graphicImage library="images" name="project_16.png" style="vertical-align: -3px;" rendered="#{result['class'].simpleName == 'Project'}"/>
+                    <p:graphicImage library="images" name="client_16.png" style="vertical-align: -3px;" rendered="#{result['class'].simpleName == 'Company'}"/>
+                    <p:graphicImage library="images" name="user_16.png" style="vertical-align: -3px;" rendered="#{result['class'].simpleName == 'User'}"/>
+                </p:column>
+                <p:column style="border:none;width:300px;">            
+                    <p:outputLabel value="#{result.toString()}"/>
+                </p:column>
+            </p:autoComplete>
+            <p:watermark for="txSearch" value="Search" /> 
+
+        </div>
     </h:form>
     <p:panel id="headerPanel">
         <h:panelGrid columns="2" width="100%">

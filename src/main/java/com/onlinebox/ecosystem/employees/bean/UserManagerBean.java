@@ -69,6 +69,7 @@ public class UserManagerBean {
 
     /**
      * This method returns all users (both enabled and disabled).
+     *
      * @return List of all users (both enabled and disabled)
      */
     public java.util.List<User> getAll() {
@@ -78,15 +79,17 @@ public class UserManagerBean {
 
     /**
      * This method returns all users that are enabled.
+     *
      * @return List of all enabled users
      */
     public java.util.List<User> getAllActiveUsers() {
         Query query = em.createNamedQuery("User.findActive");
         return query.getResultList();
     }
-    
-     /**
+
+    /**
      * This method returns all users that are enabled.
+     *
      * @return List of all enabled users
      */
     public java.util.List<User> getAllDisabledUsers() {
@@ -103,18 +106,17 @@ public class UserManagerBean {
     }
 
     /**
-	 * 
-	 * @param username
-	 */
-	public User getByUsername(String username) throws NoResultException  {
+     *
+     * @param username
+     */
+    public User getByUsername(String username) throws NoResultException {
         Query query = em.createNamedQuery("User.findByUsername");
         query.setParameter("username", username);
-        try{
+        try {
             return (User) query.getSingleResult();
-        }
-        catch(NoResultException nre){
+        } catch (NoResultException nre) {
             return new User();
-        }     
+        }
     }
 
     /**
@@ -151,6 +153,13 @@ public class UserManagerBean {
 
     }
 
+    public java.util.List<User> findAllByName(String name) {
+        Query query = em.createNamedQuery("User.findAllByName");
+        query.setParameter("firstname", "%" + name + "%");
+        query.setParameter("lastname", "%" + name + "%");
+        return query.getResultList();
+    }
+
     /*
      * Hash with SHA-512 the string specified in parameter and returns it in hexadecimal.
      */
@@ -167,5 +176,4 @@ public class UserManagerBean {
 
         return hexString.toString();
     }
-
 }

@@ -10,11 +10,6 @@
         <title>ecosystem : Clients Management and Time Tracking</title>
         <h:outputStylesheet library="css" name="style.css"/>
 
-        <style>
-            #test{
-                vertical-align: bottom;
-            }
-        </style>
 
     </h:head>
     <h:body>
@@ -65,8 +60,8 @@
                     </h:panelGrid>
                 </p:dialog>
             </h:form>
-            
-             <!-- Edit Task Popup -->
+
+            <!-- Edit Task Popup -->
             <h:form id="fTaskDetails">
                 <p:dialog id="wTaskDetails" widgetVar="wTaskDetails" header="Edit Task" resizable="false" modal="true" >        
                     <p:messages autoUpdate="true" severity="error, severe, fatal" />
@@ -99,8 +94,8 @@
                     </h:panelGrid>
                 </p:dialog>
             </h:form>
-            
-             <!-- Delete Task Popup -->
+
+            <!-- Delete Task Popup -->
             <h:form>
                 <p:confirmDialog id="wDeleteTask" widgetVar="wDeleteTask" header="Delete Task" message="Do you really want to delete permanently this task?"  severity="alert" >
                     <p:commandButton value="Yes" update=":fTasks:taTasks" oncomplete="wDeleteTask.hide()"  
@@ -114,11 +109,36 @@
             <h:form id="fTasks">
 
 
-                <div style="margin-bottom:10px;;margin-top:10px;">
-                    <p:commandButton icon="ui-icon-plus" value="Add Task" update=":fAddTask:panelAddTask" oncomplete="wAddTask.show()" action="#{taskController.resetTask()}" >
-                        <p:resetInput target=":fAddTask:panelAddTask"/>
-                    </p:commandButton>
-                </div>
+                <h:panelGrid columns="2" width="100%">
+                    <h:column>
+                        <p:commandButton icon="ui-icon-plus" value="Add Task" update=":fAddTask:panelAddTask" oncomplete="wAddTask.show()" action="#{taskController.resetTask()}" >
+                            <p:resetInput target=":fAddTask:panelAddTask"/>
+                        </p:commandButton>
+                    </h:column>
+                    <h:column>
+                        <div style="text-align:right;">
+                            <p:outputLabel value="Filter :" style="margin-right:10px;"/>
+                        <p:selectOneMenu value="#{taskController.selectedUser}" converter="#{userConverter}" effect="fade" style="text-align:left;vertical-align:middle;">  
+                            <p:ajax event="change" listener="#{taskController.handleUserSelection()}" update="taTasks"/>
+                            <f:selectItems value="#{taskController.allUsers}" var="user" itemLabel="#{user.firstname} #{user.lastname}" itemValue="#{user}"/>                      
+                        </p:selectOneMenu>  
+                        </div>
+                    </h:column>
+                </h:panelGrid>
+                <!-- <div style="margin-bottom:10px;;margin-top:10px;">
+ 
+                     <p:commandButton icon="ui-icon-plus" value="Add Task" update=":fAddTask:panelAddTask" oncomplete="wAddTask.show()" action="#{taskController.resetTask()}" >
+                         <p:resetInput target=":fAddTask:panelAddTask"/>
+                     </p:commandButton>
+ 
+ 
+                     <p:outputLabel value="Filter"/>
+                     <p:selectOneMenu value="#{taskController.selectedUser}" converter="#{userConverter}" effect="fade" style="vertical-align:middle;">  
+                         <p:ajax event="change" listener="#{taskController.handleUserSelection()}" update="taTasks"/>
+                         <f:selectItems value="#{taskController.allUsers}" var="user" itemLabel="#{user.firstname} #{user.lastname}" itemValue="#{user}"/>                      
+                     </p:selectOneMenu>  
+ 
+                 </div>-->
                 <!-- Tasks List -->
                 <p:dataTable id="taTasks" var="task" value="#{taskController.tasks}">                                    
                     <p:column headerText="Date">
@@ -161,7 +181,7 @@
 
             </h:form>
         </p:panel>
-        
+
         <script type="text/javascript">  
             //<![CDATA[
             function handleDialogClose(xhr, status, args) {  
@@ -172,7 +192,7 @@
             }           
             //]]>
         </script>     
-        
+
     </h:body>
 </html>
 

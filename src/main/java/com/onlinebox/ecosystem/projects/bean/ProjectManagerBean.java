@@ -1,6 +1,7 @@
 package com.onlinebox.ecosystem.projects.bean;
 
 import com.onlinebox.ecosystem.projects.entity.*;
+import com.onlinebox.ecosystem.util.entity.IEntity;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -65,7 +66,7 @@ public class ProjectManagerBean {
         return em.find(Project.class, id);
     }
 
-    public java.util.List<Project> findAllByName(String name) {
+    public java.util.List<IEntity> findAllByName(String name) {
         Query query = em.createNamedQuery("Project.findAllByName");
         query.setParameter("projectName", "%" + name + "%");
         return query.getResultList();
