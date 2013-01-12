@@ -38,6 +38,7 @@ public class ProjectController {
     private List<Project> projects; //contain the list of projects to be displayed 
     private Project project; //contain the new project to add or the current project to edit
     private Task task;
+    private int selectedStatus;
 
     /**
      * Creates a new instance of ProjectController
@@ -48,6 +49,7 @@ public class ProjectController {
         project = new Project();
         task = new Task();
         project.setCompany(new Company());
+        selectedStatus = -1;
     }
 
     /**
@@ -222,7 +224,28 @@ public class ProjectController {
     public List<IEntity> searchProject(String query) {
         return projectBean.findAllByName(query);
     }
+
+    /**
+     * This methods returns a list of Project with status "In Progress" that match the specified parameter.
+     *
+     * @param query part of the name of the projects to return
+     * @return list of project with status "In Progress" that match the search
+     */
+    public List<IEntity> searchInProgressProject(String query) {
+        return projectBean.findAllInProgressByName(query);
+    }
+
+    public int getSelectedStatus() {
+        return selectedStatus;
+    }
+
+    public void setSelectedStatus(int selectedStatus) {
+        this.selectedStatus = selectedStatus;
+    }
     
-    
+
+    public void handleUserSelection(){
+        projects = projectBean.getByStatus(selectedStatus);
+    }
     
 }

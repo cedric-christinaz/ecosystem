@@ -57,6 +57,24 @@ public class ProjectManagerBean {
         Query query = em.createNamedQuery("Project.findAll");
         return query.getResultList();
     }
+    
+    /**
+     * This method returns a list of project basing on the specified status
+     * @param projectStatus 0 : In Progress, 1 : Closed, Other value: All project
+     * @return 
+     */
+    public java.util.List<Project> getByStatus(int projectStatus) {
+        Query query = null;
+        if(projectStatus == 0 || projectStatus == 1){
+             query = em.createNamedQuery("Project.findAllByStatus");
+             query.setParameter("projectStatus", projectStatus);
+        }
+        else{
+            query = em.createNamedQuery("Project.findAll");
+        }
+       
+        return query.getResultList();
+    }
 
     /**
      *
@@ -71,4 +89,13 @@ public class ProjectManagerBean {
         query.setParameter("projectName", "%" + name + "%");
         return query.getResultList();
     }
+    
+     public java.util.List<IEntity> findAllInProgressByName(String name) {
+        Query query = em.createNamedQuery("Project.findAllInProgressByName");
+        query.setParameter("projectName", "%" + name + "%");
+        return query.getResultList();
+    }
+     
+     
+    
 }

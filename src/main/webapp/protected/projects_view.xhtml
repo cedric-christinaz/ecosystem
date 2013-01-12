@@ -91,6 +91,17 @@
                             </p:row>      
                             <p:row>    
                                 <p:column>
+                                    <p:outputLabel value="Status : * "/>
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu value="#{projectController.project.status}">  
+                                        <f:selectItem itemLabel="In progress" itemValue="0" />                              
+                                        <f:selectItem itemLabel="Closed" itemValue="1" />                              
+                                    </p:selectOneMenu>  
+                                </p:column>
+                            </p:row>      
+                            <p:row>    
+                                <p:column>
                                     <p:selectBooleanCheckbox value="#{projectController.project.useEstimatedHour}" style="vertical-align:-4px;">  
                                         <p:ajax update="txEstimatedHour" />  
                                     </p:selectBooleanCheckbox>                                    
@@ -140,7 +151,17 @@
                                             <p:inputText value="#{projectController.project.name}" maxlength="255" size="38" required="true" requiredMessage="Project Name is required."/>                                                                                  
                                         </p:column>
                                     </p:row>   
-
+                                    <p:row>    
+                                        <p:column>
+                                            <p:outputLabel value="Status : * "/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:selectOneMenu value="#{projectController.project.status}">  
+                                                <f:selectItem itemLabel="In progress" itemValue="0" />                              
+                                                <f:selectItem itemLabel="Closed" itemValue="1" />                              
+                                            </p:selectOneMenu>  
+                                        </p:column>
+                                    </p:row>  
                                     <p:row>    
                                         <p:column>
                                             <p:selectBooleanCheckbox value="#{projectController.project.useEstimatedHour}" style="vertical-align:-4px;">  
@@ -167,7 +188,7 @@
                             </p:tab>      
                             <p:tab id="tabTask" title="Tasks">
                                 <div style="margin-bottom:10px;">
-                                    <p:commandButton icon="ui-icon-plus" value="Add Task" update=":fAddTask:panelAddTask" oncomplete="wAddTask.show()" rendered="#{facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')}">
+                                    <p:commandButton icon="ui-icon-plus" value="Add Task" update=":fAddTask:panelAddTask" oncomplete="wAddTask.show()" rendered="#{projectController.project.status eq 0 and (facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER'))}">
                                         <p:resetInput target=":fAddTask:panelAddTask"/>
                                     </p:commandButton>
                                 </div>
@@ -216,11 +237,29 @@
                 <!-- Action button to :
                                 1. add a project
                 -->
-                <div style="margin-bottom:10px;margin-top:10px;">
+                <!--<div style="margin-bottom:10px;margin-top:10px;">
                     <p:commandButton icon="ui-icon-plus" value="Add Project" update=":fAddProject:panelAddProject" oncomplete="wAddProject.show()" action="#{projectController.resetProject()}" rendered="#{facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')}">
                         <p:resetInput target=":fAddProject:panelAddProject"/>
                     </p:commandButton>
-                </div>
+                </div>-->
+                <h:panelGrid columns="2" width="100%">
+                    <h:column>
+                        <p:commandButton icon="ui-icon-plus" value="Add Project" update=":fAddProject:panelAddProject" oncomplete="wAddProject.show()" action="#{projectController.resetProject()}" rendered="#{facesContext.externalContext.isUserInRole('ADMIN') or facesContext.externalContext.isUserInRole('POWER_USER')}">
+                            <p:resetInput target=":fAddProject:panelAddProject"/>
+                        </p:commandButton>
+                    </h:column>
+                    <h:column>
+                        <div style="text-align:right;">
+                            <p:outputLabel value="Filter :" style="margin-right:10px;"/>
+                            <p:selectOneMenu value="#{projectController.selectedStatus}" effect="fade" style="text-align:left;vertical-align:middle;">  
+                                <p:ajax event="change" listener="#{projectController.handleUserSelection()}" update="taProjects"/>
+                                <f:selectItem itemLabel="All" itemValue="-1" />         
+                                <f:selectItem itemLabel="In progress" itemValue="0" />                              
+                                <f:selectItem itemLabel="Closed" itemValue="1" />                              
+                            </p:selectOneMenu>                             
+                        </div>
+                    </h:column>
+                </h:panelGrid>
                 <!-- Projects List -->
                 <p:dataTable id="taProjects" var="project" value="#{projectController.projects}">                   
                     <p:column headerText="Project Name">
@@ -228,6 +267,10 @@
                     </p:column>
                     <p:column headerText="Client Name">
                         #{project.company.name}
+                    </p:column>     
+                    <p:column headerText="Status">
+                        <h:outputText value="In progress" rendered="#{project.status eq 0}"/>
+                        <h:outputText value="Closed" rendered="#{project.status eq 1}"/>
                     </p:column>     
                     <p:column headerText="End Date">
                         <h:outputText value="#{project.endDate}">

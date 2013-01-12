@@ -156,7 +156,16 @@
                             <p:dataTable id="taProjects" var="project" value="#{clientController.company.projects}">                                    
                                 <p:column headerText="Project Name">
                                     #{project.name}
-                                </p:column>          
+                                </p:column>  
+                                <p:column headerText="Status">
+                                    <h:outputText value="In progress" rendered="#{project.status eq 0}"/>
+                                    <h:outputText value="Closed" rendered="#{project.status eq 1}"/>
+                                </p:column>     
+                                <p:column headerText="End Date">
+                                    <h:outputText value="#{project.endDate}">
+                                        <f:convertDateTime pattern="dd.MM.yyyy"/>
+                                    </h:outputText>
+                                </p:column>  
                                 <p:column headerText="Estimated">
                                     #{project.estimatedHour}#{" h"}
                                 </p:column>      

@@ -9,7 +9,9 @@ import javax.persistence.NamedQuery;
 
 @NamedQueries({
     @NamedQuery(name = "Project.findAll", query = "select p from Project p ORDER BY p.name"),
-    @NamedQuery(name = "Project.findAllByName", query = "select p from Project p WHERE p.name LIKE :projectName ORDER BY p.name")})
+    @NamedQuery(name = "Project.findAllByName", query = "select p from Project p WHERE p.name LIKE :projectName ORDER BY p.name"),
+    @NamedQuery(name = "Project.findAllByStatus", query = "select p from Project p WHERE p.status = :projectStatus ORDER BY p.name"),
+    @NamedQuery(name = "Project.findAllInProgressByName", query = "select p from Project p WHERE p.status = 0 AND p.name LIKE :projectName ORDER BY p.name")})
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
 @javax.persistence.Table(name = "t_project")
@@ -41,6 +43,8 @@ public class Project implements IEntity, Serializable {
     private boolean useEstimatedHour;
     @javax.persistence.Column(name = "UseEndDate", nullable = false, length = 1)
     private boolean useEndDate;
+    @javax.persistence.Column(name = "Status", nullable = false, length = 2)
+    private int status;
 
     public Company getCompany() {
         return this.company;
@@ -125,4 +129,36 @@ public class Project implements IEntity, Serializable {
     public void setUseEndDate(boolean useEndDate) {
         this.useEndDate = useEndDate;
     }
+
+    public int getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Project other = (Project) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

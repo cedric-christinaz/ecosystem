@@ -11,7 +11,7 @@ import javax.persistence.*;
     @NamedQuery(name = "Company.findAllByName", query = "select c from Company c WHERE c.name LIKE :clientName ORDER BY c.name")})
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
-@javax.persistence.Table(name="t_company")
+@javax.persistence.Table(name = "t_company")
 public class Company implements IEntity, Serializable {
 
     @javax.persistence.OneToMany(mappedBy = "company", cascade = {CascadeType.ALL})
@@ -41,11 +41,11 @@ public class Company implements IEntity, Serializable {
     private String phone;
     @javax.persistence.Column(name = "Fax", length = 20)
     private String fax;
-	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-	@javax.persistence.Column(name="CreateDate", nullable=false)
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @javax.persistence.Column(name = "CreateDate", nullable = false)
     private java.util.Date createDate;
-	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-	@javax.persistence.Column(name="LastUpdateDate", nullable=false)
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @javax.persistence.Column(name = "LastUpdateDate", nullable = false)
     private java.util.Date lastUpdateDate;
     @javax.persistence.Column(name = "Logo", length = 100)
     private String logo;
@@ -54,7 +54,7 @@ public class Company implements IEntity, Serializable {
     private List<Project> projects;
     @javax.persistence.Column(name = "Website", length = 100)
     private String website;
-    @javax.persistence.Column(name="PostalBox", length=50, nullable = false)
+    @javax.persistence.Column(name = "PostalBox", length = 50)
     private String postalBox;
 
     public Company() {

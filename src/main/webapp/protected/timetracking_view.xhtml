@@ -34,7 +34,7 @@
                     <h:panelGrid id="panelAddTask" columns="1">
                         <h:panelGrid columns="2">
                             <p:outputLabel value="Project : * "/>
-                            <p:autoComplete value="#{taskController.task.project}" completeMethod="#{projectController.searchProject}" minQueryLength="3"
+                            <p:autoComplete value="#{taskController.task.project}" completeMethod="#{projectController.searchInProgressProject}" minQueryLength="3"
                                             var="project" itemLabel="#{project.name}" itemValue="#{project}" size="63" 
                                             converter="#{projectConverter}" converterMessage="The Project does not exist." />   
 
