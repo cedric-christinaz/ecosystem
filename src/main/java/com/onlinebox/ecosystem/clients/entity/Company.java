@@ -54,7 +54,7 @@ public class Company implements IEntity, Serializable {
     private List<Project> projects;
     @javax.persistence.Column(name = "Website", length = 100)
     private String website;
-    @javax.persistence.Column(name="PostalBox", length=15, nullable = false)
+    @javax.persistence.Column(name="PostalBox", length=50, nullable = false)
     private String postalBox;
 
     public Company() {
