@@ -45,7 +45,7 @@
                             <p:inputMask value="#{taskController.task.duration}" mask="99:99" converter="#{durationConverter}" converterMessage="Duration format not correct."/>                                      
 
                             <p:outputLabel value="Task Type : * "/>
-                            <p:selectOneMenu value="#{taskController.task.taskType.id}" style="width: 100px;">               
+                            <p:selectOneMenu value="#{taskController.task.taskType.id}" style="width: 353px;">               
                                 <f:selectItems value="#{taskTypeController.taskTypes}" var="taskType" itemLabel="#{taskType.name}" itemValue="#{taskType.id}"/>
                             </p:selectOneMenu> 
 

@@ -26,7 +26,7 @@ public class Project implements IEntity, Serializable {
     private long id;
     @javax.persistence.Column(name = "Name", nullable = false, length = 150)
     private String name;
-    @javax.persistence.Column(name = "EstimatedHour", nullable = false, length = 11)
+    @javax.persistence.Column(name = "EstimatedHour", length = 11)
     private int estimatedHour;
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @javax.persistence.Column(name = "CreateDate", nullable = false)
@@ -34,6 +34,13 @@ public class Project implements IEntity, Serializable {
     @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @javax.persistence.Column(name = "LastUpdateDate", nullable = false)
     private java.util.Date lastUpdateDate;
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @javax.persistence.Column(name = "EndDate")
+    private java.util.Date endDate;
+    @javax.persistence.Column(name = "UseEstimatedHour", nullable = false, length = 1)
+    private boolean useEstimatedHour;
+    @javax.persistence.Column(name = "UseEndDate", nullable = false, length = 1)
+    private boolean useEndDate;
 
     public Company getCompany() {
         return this.company;
@@ -90,8 +97,32 @@ public class Project implements IEntity, Serializable {
     public void setLastUpdateDate(java.util.Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
-    
-    public String toString(){
+
+    public String toString() {
         return this.getName();
+    }
+
+    public java.util.Date getEndDate() {
+        return this.endDate;
+    }
+
+    public void setEndDate(java.util.Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public boolean isUseEstimatedHour() {
+        return this.useEstimatedHour;
+    }
+
+    public void setUseEstimatedHour(boolean useEstimatedHour) {
+        this.useEstimatedHour = useEstimatedHour;
+    }
+
+    public boolean isUseEndDate() {
+        return this.useEndDate;
+    }
+
+    public void setUseEndDate(boolean useEndDate) {
+        this.useEndDate = useEndDate;
     }
 }

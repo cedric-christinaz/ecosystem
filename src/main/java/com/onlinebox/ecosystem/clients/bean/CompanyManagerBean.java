@@ -37,6 +37,10 @@ public class CompanyManagerBean {
      */
     @RolesAllowed({"ADMIN", "POWER_USER"})
     public void delete(Company company) {
+//        for(Contact contact : company.getContacts()){
+//            Contact contactToDelete = em.merge(contact);
+//            em.remove(contactToDelete);
+//        }
         Company toDelete = em.merge(company);
         em.remove(toDelete);
     }

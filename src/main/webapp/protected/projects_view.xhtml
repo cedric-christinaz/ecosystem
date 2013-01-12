@@ -14,6 +14,10 @@
             .ui-autocomplete-company input{
                 width:330px;
             }
+
+            .myPanelGrid, .myPanelGrid tr, .myPanelGrid td{
+                border:none;
+            }
         </style>
 
     </h:head>
@@ -66,14 +70,50 @@
                 <p:dialog id="wAddProject" widgetVar="wAddProject" header="Add Project" resizable="false" modal="true" >        
                     <p:messages autoUpdate="true" severity="error, severe, fatal" />
                     <h:panelGrid id="panelAddProject" columns="1">
-                        <h:panelGrid columns="2">
-                            <p:outputLabel value="Project Name : * "/><p:inputText id="txCompanyName" value="#{projectController.project.name}" size="60" maxlength="100" required="true" requiredMessage="Project Name is required."/>
-                            <p:outputLabel value="Client Name : * "/>
-                            <p:autoComplete value="#{projectController.project.company}" completeMethod="#{clientController.searchClient}" minQueryLength="3" styleClass="ui-autocomplete-company"
-                                            forceSelection="true" var="company" itemLabel="#{company.name}" itemValue="#{company}" 
-                                            converter="#{companyConverter}" converterMessage="The Client does not exist." />                                          
-                            <p:outputLabel value="Estimated Hours : "/><p:inputText value="#{projectController.project.estimatedHour}" converterMessage="Estimated Hours must be a number."/>       
-                        </h:panelGrid>
+                        <p:panelGrid styleClass="myPanelGrid">
+                            <p:row>    
+                                <p:column>
+                                    <p:outputLabel value="Project Name : * "/>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="txCompanyName" value="#{projectController.project.name}" size="60" maxlength="100" required="true" requiredMessage="Project Name is required."/>
+                                </p:column>
+                            </p:row>      
+                            <p:row>    
+                                <p:column>
+                                    <p:outputLabel value="Client Name : * "/>
+                                </p:column>
+                                <p:column>
+                                    <p:autoComplete value="#{projectController.project.company}" completeMethod="#{clientController.searchClient}" minQueryLength="3" styleClass="ui-autocomplete-company"
+                                                    forceSelection="true" var="company" itemLabel="#{company.name}" itemValue="#{company}" 
+                                                    converter="#{companyConverter}" converterMessage="The Client does not exist." />                                          
+                                </p:column>
+                            </p:row>      
+                            <p:row>    
+                                <p:column>
+                                    <p:selectBooleanCheckbox value="#{projectController.project.useEstimatedHour}" style="vertical-align:-4px;">  
+                                        <p:ajax update="txEstimatedHour" />  
+                                    </p:selectBooleanCheckbox>                                    
+                                    <p:outputLabel value="Estimated Hours : " style="margin-left:5px;margin-right: 5px;"/>
+                                </p:column>
+                                <p:column >
+                                    <p:inputText id="txEstimatedHour" value="#{projectController.project.estimatedHour}" converterMessage="Estimated Hours must be a number." disabled="#{!projectController.project.useEstimatedHour}"/>       
+                                </p:column>
+                            </p:row>       
+                            <p:row>    
+                                <p:column>
+                                    <p:selectBooleanCheckbox value="#{projectController.project.useEndDate}" style="vertical-align:-4px;">  
+                                        <p:ajax update="txEndDate" />  
+                                    </p:selectBooleanCheckbox>         
+
+                                    <p:outputLabel value="End Date : " style="margin-left:5px;margin-right: 5px;width:200px"/>
+                                </p:column>
+                                <p:column >
+                                    <p:calendar id="txEndDate" value="#{projectController.project.endDate}" pattern="dd.MM.yyyy" disabled="#{!projectController.project.useEndDate}"/>        
+                                </p:column>
+                            </p:row>       
+
+                        </p:panelGrid>
                         <h:panelGrid style="float:right;margin-top: 10px;" columns="2">
                             <p:commandButton icon="ui-icon-disk" value="Save" action="#{projectController.saveProject}" update=":fProject:taProjects" oncomplete="handleDialogClose(xhr, status, args)"/>                                                 
                             <p:commandButton icon="ui-icon-close" value="Cancel" onclick="wAddProject.hide();"/>
@@ -91,10 +131,39 @@
                     <h:panelGrid id="panelEditProject" columns="1">
                         <p:tabView id="tabViewProject" orientation="left" style="width:700px;">
                             <p:tab id="tabGeneral" title="Basic Info">  
-                                <h:panelGrid columns="2">
-                                    <p:outputLabel value="Project Name : * "/><p:inputText value="#{projectController.project.name}" maxlength="255" size="38" required="true" requiredMessage="Project Name is required."/>                                                       
-                                    <p:outputLabel value="Estimated Hours : "/><p:inputText value="#{projectController.project.estimatedHour}"  converterMessage="Estimated Hours must be a number."/>                         
-                                </h:panelGrid>
+                                <p:panelGrid styleClass="myPanelGrid">
+                                    <p:row>    
+                                        <p:column>
+                                            <p:outputLabel value="Project Name : * "/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText value="#{projectController.project.name}" maxlength="255" size="38" required="true" requiredMessage="Project Name is required."/>                                                                                  
+                                        </p:column>
+                                    </p:row>   
+
+                                    <p:row>    
+                                        <p:column>
+                                            <p:selectBooleanCheckbox value="#{projectController.project.useEstimatedHour}" style="vertical-align:-4px;">  
+                                                <p:ajax update="txEstimatedHourModif" />  
+                                            </p:selectBooleanCheckbox>         
+                                            <p:outputLabel value="Estimated Hours : "/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:inputText id="txEstimatedHourModif" value="#{projectController.project.estimatedHour}"  converterMessage="Estimated Hours must be a number." disabled="#{!projectController.project.useEstimatedHour}"/>                         
+                                        </p:column>
+                                    </p:row> 
+                                    <p:row>    
+                                        <p:column>
+                                            <p:selectBooleanCheckbox value="#{projectController.project.useEndDate}" style="vertical-align:-4px;">  
+                                                <p:ajax update="txEndDateModif" />  
+                                            </p:selectBooleanCheckbox>         
+                                            <p:outputLabel value="End Date : "/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:calendar id="txEndDateModif" value="#{projectController.project.endDate}" pattern="dd.MM.yyyy" disabled="#{!projectController.project.useEndDate}"/>          
+                                        </p:column>
+                                    </p:row> 
+                                </p:panelGrid>
                             </p:tab>      
                             <p:tab id="tabTask" title="Tasks">
                                 <div style="margin-bottom:10px;">
@@ -160,8 +229,13 @@
                     <p:column headerText="Client Name">
                         #{project.company.name}
                     </p:column>     
+                    <p:column headerText="End Date">
+                        <h:outputText value="#{project.endDate}">
+                            <f:convertDateTime pattern="dd.MM.yyyy"/>
+                        </h:outputText>
+                    </p:column>  
                     <p:column headerText="Estimated Hours">
-                        #{project.estimatedHour}#{" h"}
+                        <h:outputText value="#{project.estimatedHour} h" rendered="#{project.estimatedHour gt 0}"/>
                     </p:column>  
                     <p:column headerText="Done">
                         <h:outputText value="#{projectController.getDoneHours(project)}" converter="#{durationConverter}"/>

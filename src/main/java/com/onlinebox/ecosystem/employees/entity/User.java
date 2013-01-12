@@ -15,7 +15,7 @@ import javax.persistence.*;
 })
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
-@javax.persistence.Table(name = "t_user")
+@javax.persistence.Table(name="t_user")
 public class User implements IEntity, Serializable {
 
     @javax.persistence.OneToOne(optional = false)
@@ -34,8 +34,8 @@ public class User implements IEntity, Serializable {
     private String lastname;
     @javax.persistence.Column(name = "Email", length = 100)
     private String email;
-    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @javax.persistence.Column(name = "Birthday")
+	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	@javax.persistence.Column(name="Birthday")
     private java.util.Date birthday;
     @javax.persistence.Column(name = "Steet", length = 100)
     private String steet;
@@ -47,8 +47,8 @@ public class User implements IEntity, Serializable {
     private boolean isActive;
     @javax.persistence.Column(name = "Image", length = 100)
     private String image;
-    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @javax.persistence.Column(name = "LastLogin")
+	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	@javax.persistence.Column(name="LastLogin")
     private java.util.Date lastLogin;
     @javax.persistence.Column(name = "PhoneHome", length = 20)
     private String phoneHome;
@@ -56,11 +56,11 @@ public class User implements IEntity, Serializable {
     private String phoneOffice;
     @javax.persistence.Column(name = "PhoneMobile", length = 20)
     private String phoneMobile;
-    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @javax.persistence.Column(name = "CreateDate", nullable = false)
+	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	@javax.persistence.Column(name="CreateDate", nullable=false)
     private java.util.Date createDate;
-    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @javax.persistence.Column(name = "LastUpdateDate", nullable = false)
+	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	@javax.persistence.Column(name="LastUpdateDate", nullable=false)
     private java.util.Date lastUpdateDate;
     @javax.persistence.Column(name = "Username", unique = true, nullable = false, length = 120)
     private String username;

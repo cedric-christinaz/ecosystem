@@ -11,10 +11,10 @@ import javax.persistence.*;
     @NamedQuery(name = "Company.findAllByName", query = "select c from Company c WHERE c.name LIKE :clientName ORDER BY c.name")})
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
-@javax.persistence.Table(name = "t_company")
+@javax.persistence.Table(name="t_company")
 public class Company implements IEntity, Serializable {
 
-    @javax.persistence.OneToMany(mappedBy = "company")
+    @javax.persistence.OneToMany(mappedBy = "company", cascade = {CascadeType.ALL})
     @javax.persistence.JoinColumn(name = "t_companyId", referencedColumnName = "Id", nullable = false)
     private List<Contact> contacts;
     @javax.persistence.OneToMany
@@ -41,19 +41,21 @@ public class Company implements IEntity, Serializable {
     private String phone;
     @javax.persistence.Column(name = "Fax", length = 20)
     private String fax;
-    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @javax.persistence.Column(name = "CreateDate", nullable = false)
+	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	@javax.persistence.Column(name="CreateDate", nullable=false)
     private java.util.Date createDate;
-    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @javax.persistence.Column(name = "LastUpdateDate", nullable = false)
+	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	@javax.persistence.Column(name="LastUpdateDate", nullable=false)
     private java.util.Date lastUpdateDate;
     @javax.persistence.Column(name = "Logo", length = 100)
     private String logo;
-    @javax.persistence.OneToMany(mappedBy = "company")
+    @javax.persistence.OneToMany(mappedBy = "company", cascade = {CascadeType.ALL})
     @javax.persistence.JoinColumn(name = "t_companyId", referencedColumnName = "Id", nullable = false)
     private List<Project> projects;
     @javax.persistence.Column(name = "Website", length = 100)
     private String website;
+    @javax.persistence.Column(name="PostalBox", length=15, nullable = false)
+    private String postalBox;
 
     public Company() {
         this.setProjects(new ArrayList<Project>());
@@ -189,9 +191,17 @@ public class Company implements IEntity, Serializable {
 
     public String toString() {
         String res = this.getName();
-        if(this.getCity() != null && !this.getCity().equals("")){
-            res += ", "+this.getCity();
+        if (this.getCity() != null && !this.getCity().equals("")) {
+            res += ", " + this.getCity();
         }
         return res;
+    }
+
+    public String getPostalBox() {
+        return this.postalBox;
+    }
+
+    public void setPostalBox(String postalBox) {
+        this.postalBox = postalBox;
     }
 }

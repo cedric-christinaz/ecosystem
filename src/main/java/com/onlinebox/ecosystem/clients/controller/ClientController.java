@@ -1,6 +1,7 @@
 package com.onlinebox.ecosystem.clients.controller;
 
 import com.onlinebox.ecosystem.clients.bean.CompanyManagerBean;
+import com.onlinebox.ecosystem.clients.bean.ContactTypeManagerBean;
 import com.onlinebox.ecosystem.clients.entity.Company;
 import com.onlinebox.ecosystem.clients.entity.Contact;
 import com.onlinebox.ecosystem.clients.entity.ContactType;
@@ -8,6 +9,7 @@ import com.onlinebox.ecosystem.employees.controller.UserController;
 import com.onlinebox.ecosystem.projects.entity.Project;
 import com.onlinebox.ecosystem.util.FileHelper;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,6 +39,8 @@ public class ClientController {
 
     @EJB
     private CompanyManagerBean clientBean;
+    @EJB
+    private ContactTypeManagerBean contactTypeBean;
     private List<Company> companies; //contain the list of clients to be displayed
     private Company company; //contain the new company to add or the current company to edit
     private String companyLogoTemp;//contain the new uploaded logo (but not saved at the moment because the save is done when closing the dialog.
@@ -61,24 +65,34 @@ public class ClientController {
      */
     @PostConstruct
     void init() {
-        
-        long idClientSearch = 0;
+        try {
+            long idClientSearch = 0;
 
-        Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        if (parameters != null) {
-            String sId = parameters.get("id");
-            if (sId != null && !sId.equals("")) {
-                idClientSearch = Long.parseLong(sId);
+            Map<String, String> parameters = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+            if (parameters != null) {
+                String sId = parameters.get("id");
+                if (sId != null && !sId.equals("")) {
+                    idClientSearch = Long.parseLong(sId);
+                }
             }
+
+            if (idClientSearch > 0) {
+                companies = new ArrayList<Company>();
+                companies.add(clientBean.get(idClientSearch));
+            } else {
+                companies = clientBean.getAll();
+            }
+
+            Path target = Paths.get("/var/www/ecosystem/pubimg/defaultcompany.png");
+            if (!Files.exists(target)) {
+                InputStream is = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/images/defaultcompany.png");
+                Files.copy(is, target, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        if (idClientSearch > 0) {
-            companies = new ArrayList<Company>();
-            companies.add(clientBean.get(idClientSearch));
-        } else {
-            companies = clientBean.getAll();
-        }
-        
+
     }
 
     public List<Company> getCompanies() {
@@ -160,7 +174,7 @@ public class ClientController {
             return "/pubimg/" + logoName;
         }
 
-        return "";
+        return "/pubimg/defaultcompany.png";
     }
 
     public boolean hasLogo(String logoName) {
@@ -186,7 +200,7 @@ public class ClientController {
             return "/pubimg/" + company.getLogo();
         }
 
-        return "";
+        return "/pubimg/defaultcompany.png";
     }
 
     public boolean hasLogo() {
@@ -306,14 +320,14 @@ public class ClientController {
             RequestContext.getCurrentInstance().addCallbackParam("isOk", true);
         }
     }
-    
+
     /**
-     * 
+     *
      * @param query
-     * @return 
+     * @return
      */
-    public List<Company> searchClient(String query){       
-      return clientBean.findAllByName(query);
+    public List<Company> searchClient(String query) {
+        return clientBean.findAllByName(query);
     }
 
     public Contact getNewContact() {
@@ -323,16 +337,15 @@ public class ClientController {
     public void setNewContact(Contact newContact) {
         this.newContact = newContact;
     }
-    
-     public void addNewContact() {
+
+    public void addNewContact() {
         System.out.println("addNewContact");
         if (newContact != null && newContact.getFirstname() != null && !newContact.getFirstname().equals("")) {
             newContact.setCompany(company);
+            System.out.println(newContact.getRole().getId());
+            newContact.setRole(contactTypeBean.get(newContact.getRole().getId()));
             company.getContacts().add(newContact);
             RequestContext.getCurrentInstance().addCallbackParam("isOk", true);
         }
     }
-    
-    
-    
 }
