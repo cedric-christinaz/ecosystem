@@ -1,5 +1,6 @@
 package com.onlinebox.ecosystem.projects.bean;
 
+import com.onlinebox.ecosystem.clients.entity.Company;
 import com.onlinebox.ecosystem.projects.entity.*;
 import com.onlinebox.ecosystem.util.entity.IEntity;
 import javax.annotation.security.RolesAllowed;
@@ -27,6 +28,11 @@ public class ProjectManagerBean {
         if (project.getName().equals("")) {
             throw new Exception("The attribute 'name' cannot be empty");
         }
+        
+        Company client = em.find(Company.class,project.getCompany().getId());
+        client.getProjects().add(project);
+        em.merge(client);
+        
         em.persist(project);
         return project;
     }

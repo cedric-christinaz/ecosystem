@@ -75,8 +75,6 @@ public class ProjectController implements Serializable {
         } else {
             projects = projectBean.getAll();
         }
-
-
     }
 
     public List<Project> getProjects() {
@@ -267,6 +265,5 @@ public class ProjectController implements Serializable {
         
         return res;
     }
-   
-    
+
 }

@@ -23,6 +23,11 @@ public class TaskManagerBean {
      * @param task
      */
     public Task create(Task task) {
+             
+        Project project = em.find(Project.class, task.getProject().getId());
+        project.getTasks().add(task);
+        em.merge(project);
+        
         em.persist(task);
         return task;
     }
