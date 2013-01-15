@@ -10,6 +10,7 @@ import com.onlinebox.ecosystem.util.entity.IEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -244,8 +245,27 @@ public class ProjectController {
     }
     
 
-    public void handleUserSelection(){
-        projects = projectBean.getByStatus(selectedStatus);
+    public void filter(){
+        projects = projectBean.getAllByStatus(selectedStatus);
     }
+    
+    public List<Vector> getWorkedHourByTaskType(){
+        List<Vector> res = new ArrayList<Vector>();
+        List taskTypes = projectBean.getWorkedHoursByTaskType(project.getId());
+        for(int i=0; i<taskTypes.size(); i++){
+            Object[] o = (Object[]) taskTypes.get(i);
+            
+            Vector temp = new Vector();
+            temp.add((String)o[0]);
+            
+            long l = (Long)o[1];
+            temp.add((int)l);
+            
+            res.add(temp);
+        }
+        
+        return res;
+    }
+   
     
 }

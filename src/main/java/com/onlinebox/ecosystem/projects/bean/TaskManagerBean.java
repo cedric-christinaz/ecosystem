@@ -2,6 +2,8 @@ package com.onlinebox.ecosystem.projects.bean;
 
 import com.onlinebox.ecosystem.employees.entity.User;
 import com.onlinebox.ecosystem.projects.entity.*;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -55,4 +57,34 @@ public class TaskManagerBean {
         query.setParameter("idUser", user.getId());
         return query.getResultList();
     }
+    
+    public List getWorkedHoursByTaskTypeCurrentMonth(){
+        Calendar calendar = Calendar.getInstance();  
+        calendar.setTime(new Date());  
+        calendar.set(Calendar.DAY_OF_MONTH, 1);  
+        Date firstDayOfMonth = calendar.getTime();  
+        
+        Query query = em.createQuery("SELECT e.name, SUM(t.duration) FROM Task t INNER JOIN t.taskType e WHERE t.taskDate >= :startDate GROUP BY e.name");
+        query.setParameter("startDate", firstDayOfMonth);
+        return query.getResultList();
+    }
+    
+    public List getWorkedHoursByTaskTypeLastMonth(){
+        Calendar calendar = Calendar.getInstance();  
+        calendar.setTime(new Date());  
+        
+        
+        calendar.set(Calendar.DAY_OF_MONTH, 1);  //first day of current month
+        calendar.add(Calendar.DATE, -1);    //last day of last month
+        Date lastDayOfLastMonth = calendar.getTime(); 
+         
+        calendar.set(Calendar.DAY_OF_MONTH, 1);  //first day of last month
+        Date firstDayOfLastMonth = calendar.getTime();  
+        
+        Query query = em.createQuery("SELECT e.name, SUM(t.duration) FROM Task t INNER JOIN t.taskType e WHERE t.taskDate >= :startDate AND t.taskDate <= :endDate GROUP BY e.name");
+        query.setParameter("startDate", firstDayOfLastMonth);
+        query.setParameter("endDate", lastDayOfLastMonth);
+        return query.getResultList();
+    }
+    
 }

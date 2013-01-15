@@ -1,12 +1,14 @@
 
 package com.onlinebox.ecosystem.controller;
 
+import com.onlinebox.ecosystem.projects.bean.ProjectManagerBean;
+import com.onlinebox.ecosystem.projects.bean.TaskManagerBean;
+import com.onlinebox.ecosystem.projects.entity.Project;
+import java.util.List;
+import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import org.primefaces.model.DashboardColumn;
-import org.primefaces.model.DashboardModel;
-import org.primefaces.model.DefaultDashboardColumn;
-import org.primefaces.model.DefaultDashboardModel;
+import org.primefaces.model.chart.PieChartModel;
 
 /**
  *
@@ -16,28 +18,63 @@ import org.primefaces.model.DefaultDashboardModel;
 @RequestScoped
 public class DashboardController {
 
-    private DashboardModel model;
-
+//    private DashboardModel model;
+    
+    @EJB
+    private ProjectManagerBean projectBean;
+    @EJB
+    private TaskManagerBean taskBean;
+    
     /**
      * Creates a new instance of DashboardController
      */
     public DashboardController() {
 
-        model = new DefaultDashboardModel();
-        DashboardColumn column1 = new DefaultDashboardColumn();
-     
-   
+//        model = new DefaultDashboardModel();
+//        DashboardColumn column1 = new DefaultDashboardColumn();
+//     
+//   
+//
+//        column1.addWidget("timeReporting");
+//    
+//
+//
+//        model.addColumn(column1);
 
-        column1.addWidget("timeReporting");
+
+    }
+
+//    public DashboardModel getModel() {
+//        return model;
+//    }
     
-
-
-        model.addColumn(column1);
-
-
+    public List<Project> getAllLateProjects(){
+        return projectBean.getAllLate();
     }
 
-    public DashboardModel getModel() {
-        return model;
+    public PieChartModel getPieModelTeamPerformanceCurrentMonth() {
+        List taskTypes = taskBean.getWorkedHoursByTaskTypeCurrentMonth();
+        PieChartModel pieModelTeamPerformance = new PieChartModel();  
+        
+        for(int i=0; i<taskTypes.size(); i++){
+            Object[] o = (Object[]) taskTypes.get(i);
+            pieModelTeamPerformance.set((String)o[0], (Long)o[1]);
+        }
+        
+        return pieModelTeamPerformance;
     }
+    
+    public PieChartModel getPieModelTeamPerformanceLastMonth() {
+        List taskTypes = taskBean.getWorkedHoursByTaskTypeLastMonth();
+        PieChartModel pieModelTeamPerformance = new PieChartModel();  
+        
+        for(int i=0; i<taskTypes.size(); i++){
+            Object[] o = (Object[]) taskTypes.get(i);
+            pieModelTeamPerformance.set((String)o[0], (Long)o[1]);
+        }
+        
+        return pieModelTeamPerformance;
+    }
+    
+    
 }

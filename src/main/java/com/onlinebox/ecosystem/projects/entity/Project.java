@@ -11,7 +11,9 @@ import javax.persistence.NamedQuery;
     @NamedQuery(name = "Project.findAll", query = "select p from Project p ORDER BY p.name"),
     @NamedQuery(name = "Project.findAllByName", query = "select p from Project p WHERE p.name LIKE :projectName ORDER BY p.name"),
     @NamedQuery(name = "Project.findAllByStatus", query = "select p from Project p WHERE p.status = :projectStatus ORDER BY p.name"),
-    @NamedQuery(name = "Project.findAllInProgressByName", query = "select p from Project p WHERE p.status = 0 AND p.name LIKE :projectName ORDER BY p.name")})
+    @NamedQuery(name = "Project.findAllInProgressByName", query = "select p from Project p WHERE p.status = 0 AND p.name LIKE :projectName ORDER BY p.name"),
+    @NamedQuery(name = "Project.findAllLate", query = "select p from Project p WHERE p.endDate < CURRENT_DATE AND p.status = 0 ORDER BY p.endDate DESC")
+})
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
 @javax.persistence.Table(name = "t_project")

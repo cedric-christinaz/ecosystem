@@ -30,8 +30,35 @@
                 <p:menuitem value="Parameters" icon="icon-parameter" outcome="parameters_view" styleClass="ui-my-menu"/>
             </p:tabMenu>
         </h:form>
-        <p:panel id="mainPanel" style="height:400px;">
-          Dashboard
+        <p:panel id="mainPanel">
+
+            <p:panel header="Team Performance">
+                <h:panelGrid columns="2">
+                    <p:pieChart value="#{dashboardController.pieModelTeamPerformanceLastMonth}" legendPosition="w"  
+                                showDataLabels="true" title="Last Month" style="width:400px;height:300px" rendered="#{not empty dashboardController.pieModelTeamPerformanceLastMonth and not empty dashboardController.pieModelTeamPerformanceLastMonth.data}"/>               
+
+                    <p:pieChart value="#{dashboardController.pieModelTeamPerformanceCurrentMonth}" legendPosition="w"  
+                                showDataLabels="true" title="Current Month" style="width:400px;height:300px" rendered="#{not empty dashboardController.pieModelTeamPerformanceCurrentMonth and not empty dashboardController.pieModelTeamPerformanceCurrentMonth.data}"/>    
+                </h:panelGrid>
+            </p:panel>
+
+            <p:panel header="Late Projects">
+                <p:dataTable var="lateProject" value="#{dashboardController.allLateProjects}">
+                    <p:column headerText="Project">
+                        #{lateProject.name}
+                    </p:column>
+                    <p:column headerText="Client">
+                        #{lateProject.company.toString()}
+                    </p:column>
+                    <p:column headerText="End Date">
+                        <h:outputText value="#{lateProject.endDate}">
+                            <f:convertDateTime pattern="dd.MM.yyyy"/>
+                        </h:outputText>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+
+
         </p:panel>
     </h:body>
 </html>

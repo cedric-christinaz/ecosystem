@@ -3,9 +3,12 @@ package com.onlinebox.ecosystem.projects.entity;
 import com.onlinebox.ecosystem.employees.entity.*;
 import com.onlinebox.ecosystem.util.entity.*;
 import java.io.*;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
-@NamedQuery(name = "Task.findAllByUser", query = "select t from Task t INNER JOIN t.user u WHERE u.id=:idUser ORDER BY t.taskDate DESC")
+@NamedQueries({
+    @NamedQuery(name = "Task.findAllByUser", query = "select t from Task t INNER JOIN t.user u WHERE u.id=:idUser ORDER BY t.taskDate DESC"),
+})
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
 @javax.persistence.Table(name="t_task")

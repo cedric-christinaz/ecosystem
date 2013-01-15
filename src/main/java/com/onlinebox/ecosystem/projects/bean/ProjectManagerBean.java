@@ -53,30 +53,46 @@ public class ProjectManagerBean {
         em.remove(toDelete);
     }
 
+    /**
+     * This method returns all the projects.
+     *
+     * @return
+     */
     public java.util.List<Project> getAll() {
         Query query = em.createNamedQuery("Project.findAll");
         return query.getResultList();
     }
-    
+
     /**
      * This method returns a list of project basing on the specified status
+     *
      * @param projectStatus 0 : In Progress, 1 : Closed, Other value: All project
-     * @return 
+     * @return
      */
-    public java.util.List<Project> getByStatus(int projectStatus) {
+    public java.util.List<Project> getAllByStatus(int projectStatus) {
         Query query = null;
-        if(projectStatus == 0 || projectStatus == 1){
-             query = em.createNamedQuery("Project.findAllByStatus");
-             query.setParameter("projectStatus", projectStatus);
-        }
-        else{
+        if (projectStatus == 0 || projectStatus == 1) {
+            query = em.createNamedQuery("Project.findAllByStatus");
+            query.setParameter("projectStatus", projectStatus);
+        } else {
             query = em.createNamedQuery("Project.findAll");
         }
-       
+
         return query.getResultList();
     }
 
     /**
+     * This method returns a list of project that should be closed basing on the End Date of the project.
+     *
+     * @return
+     */
+    public java.util.List<Project> getAllLate() {
+        Query query = em.createNamedQuery("Project.findAllLate");
+        return query.getResultList();
+    }
+
+    /**
+     * This method return the Project that corresponds to the specified id
      *
      * @param id
      */
@@ -89,13 +105,16 @@ public class ProjectManagerBean {
         query.setParameter("projectName", "%" + name + "%");
         return query.getResultList();
     }
-    
-     public java.util.List<IEntity> findAllInProgressByName(String name) {
+
+    public java.util.List<IEntity> findAllInProgressByName(String name) {
         Query query = em.createNamedQuery("Project.findAllInProgressByName");
         query.setParameter("projectName", "%" + name + "%");
         return query.getResultList();
     }
-     
-     
-    
+
+    public java.util.List getWorkedHoursByTaskType(long idProject) {
+        Query query = em.createQuery("SELECT e.name, SUM(t.duration) FROM Task t INNER JOIN t.taskType e WHERE t.project.id = :idProject GROUP BY e.name");
+        query.setParameter("idProject", idProject);
+        return query.getResultList();
+    }
 }
