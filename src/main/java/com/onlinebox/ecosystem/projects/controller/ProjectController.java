@@ -7,6 +7,7 @@ import com.onlinebox.ecosystem.projects.bean.TaskTypeManagerBean;
 import com.onlinebox.ecosystem.projects.entity.Project;
 import com.onlinebox.ecosystem.projects.entity.Task;
 import com.onlinebox.ecosystem.util.entity.IEntity;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ import org.primefaces.context.RequestContext;
  */
 @ManagedBean
 @ViewScoped
-public class ProjectController {
+public class ProjectController implements Serializable {
 
     @ManagedProperty(value = "#{userSessionController.user}")
     private User user;

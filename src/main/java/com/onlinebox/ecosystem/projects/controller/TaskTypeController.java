@@ -3,6 +3,7 @@ package com.onlinebox.ecosystem.projects.controller;
 
 import com.onlinebox.ecosystem.projects.bean.TaskTypeManagerBean;
 import com.onlinebox.ecosystem.projects.entity.TaskType;
+import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +21,7 @@ import org.primefaces.context.RequestContext;
  */
 @ManagedBean
 @ViewScoped
-public class TaskTypeController {
+public class TaskTypeController implements Serializable {
 
     @EJB
     private TaskTypeManagerBean taskTypeBean;

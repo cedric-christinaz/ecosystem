@@ -2,6 +2,7 @@ package com.onlinebox.ecosystem.employees.controller;
 
 import com.onlinebox.ecosystem.employees.bean.UserJobManagerBean;
 import com.onlinebox.ecosystem.employees.entity.UserJob;
+import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +20,7 @@ import org.primefaces.context.RequestContext;
  */
 @ManagedBean
 @ViewScoped
-public class UserJobController {
+public class UserJobController implements Serializable {
 
     private List<UserJob> userJobs;
     private UserJob userJob;

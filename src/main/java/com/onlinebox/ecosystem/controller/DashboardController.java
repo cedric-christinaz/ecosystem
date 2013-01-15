@@ -4,6 +4,7 @@ package com.onlinebox.ecosystem.controller;
 import com.onlinebox.ecosystem.projects.bean.ProjectManagerBean;
 import com.onlinebox.ecosystem.projects.bean.TaskManagerBean;
 import com.onlinebox.ecosystem.projects.entity.Project;
+import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -16,7 +17,7 @@ import org.primefaces.model.chart.PieChartModel;
  */
 @ManagedBean
 @RequestScoped
-public class DashboardController {
+public class DashboardController implements Serializable{
 
 //    private DashboardModel model;
     

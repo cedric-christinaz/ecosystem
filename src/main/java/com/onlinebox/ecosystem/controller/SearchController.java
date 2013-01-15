@@ -8,6 +8,7 @@ import com.onlinebox.ecosystem.projects.bean.ProjectManagerBean;
 import com.onlinebox.ecosystem.projects.entity.Project;
 import com.onlinebox.ecosystem.util.entity.IEntity;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +26,7 @@ import org.primefaces.event.SelectEvent;
  */
 @ManagedBean
 @RequestScoped
-public class SearchController {
+public class SearchController implements Serializable {
 
     @EJB
     private ProjectManagerBean projectBean;

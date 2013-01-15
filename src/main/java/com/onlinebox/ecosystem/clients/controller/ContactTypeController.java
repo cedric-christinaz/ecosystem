@@ -2,6 +2,7 @@ package com.onlinebox.ecosystem.clients.controller;
 
 import com.onlinebox.ecosystem.clients.bean.ContactTypeManagerBean;
 import com.onlinebox.ecosystem.clients.entity.ContactType;
+import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +20,7 @@ import org.primefaces.context.RequestContext;
  */
 @ManagedBean
 @ViewScoped
-public class ContactTypeController {
+public class ContactTypeController implements Serializable {
 
     @EJB
     private ContactTypeManagerBean contactTypeBean;

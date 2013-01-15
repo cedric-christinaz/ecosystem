@@ -10,6 +10,7 @@ import com.onlinebox.ecosystem.projects.entity.Project;
 import com.onlinebox.ecosystem.util.FileHelper;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,7 +36,7 @@ import org.primefaces.model.UploadedFile;
  */
 @ManagedBean
 @ViewScoped
-public class ClientController {
+public class ClientController implements Serializable{
 
     @EJB
     private CompanyManagerBean clientBean;

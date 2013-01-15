@@ -5,6 +5,7 @@ import com.onlinebox.ecosystem.employees.entity.User;
 import com.onlinebox.ecosystem.projects.bean.TaskManagerBean;
 import com.onlinebox.ecosystem.projects.bean.TaskTypeManagerBean;
 import com.onlinebox.ecosystem.projects.entity.Task;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -24,7 +25,7 @@ import org.primefaces.context.RequestContext;
  */
 @ManagedBean
 @ViewScoped
-public class TaskController {
+public class TaskController implements Serializable {
 
     @ManagedProperty(value = "#{userSessionController.user}")
     private User user;
