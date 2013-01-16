@@ -14,7 +14,7 @@ import javax.persistence.Query;
  */
 @javax.ejb.Stateless(name = "TaskManager")
 public class TaskManagerBean {
-
+  
     @PersistenceContext
     private EntityManager em;
 
@@ -60,6 +60,15 @@ public class TaskManagerBean {
     public List<Task> getByUser(User user){
         Query query = em.createNamedQuery("Task.findAllByUser");
         query.setParameter("idUser", user.getId());
+        return query.getResultList();
+    }
+    
+    public List<Task> getByUserAndByPeriod(User user, Date startDate, Date endDate){
+
+        Query query = em.createNamedQuery("Task.findAllByUserAndByPeriod");
+        query.setParameter("idUser", user.getId());
+        query.setParameter("startDate", startDate);
+        query.setParameter("endDate", endDate);
         return query.getResultList();
     }
     

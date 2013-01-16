@@ -8,6 +8,7 @@ import javax.persistence.NamedQuery;
 
 @NamedQueries({
     @NamedQuery(name = "Task.findAllByUser", query = "select t from Task t INNER JOIN t.user u WHERE u.id=:idUser ORDER BY t.taskDate DESC"),
+    @NamedQuery(name = "Task.findAllByUserAndByPeriod", query = "select t from Task t INNER JOIN t.user u WHERE u.id=:idUser AND (t.taskDate BETWEEN :startDate AND :endDate)  ORDER BY t.taskDate DESC")
 })
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity

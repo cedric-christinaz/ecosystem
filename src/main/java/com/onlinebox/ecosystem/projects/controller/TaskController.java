@@ -6,6 +6,7 @@ import com.onlinebox.ecosystem.projects.bean.TaskManagerBean;
 import com.onlinebox.ecosystem.projects.bean.TaskTypeManagerBean;
 import com.onlinebox.ecosystem.projects.entity.Task;
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,6 +28,9 @@ import org.primefaces.context.RequestContext;
 @ViewScoped
 public class TaskController implements Serializable {
 
+    public final static int PERIOD_DAY = 1;
+    public final static int PERIOD_WEEK = 2;
+    public final static int PERIOD_MONTH = 3;
     @ManagedProperty(value = "#{userSessionController.user}")
     private User user;
     @EJB
@@ -38,6 +42,8 @@ public class TaskController implements Serializable {
     private List<Task> tasks;
     private Task task;
     private User selectedUser;
+    private int periodToDisplay;    //contains the period to display (day, week or month)
+    private Date selectedDate;  //contains the current selected date for the date navigation
 
     /**
      * Creates a new instance of TaskController
@@ -45,6 +51,8 @@ public class TaskController implements Serializable {
     public TaskController() {
         task = new Task();
         task.setTaskDate(new Date());
+        periodToDisplay = PERIOD_WEEK;
+        selectedDate = new Date();
     }
 
     /**
@@ -52,8 +60,9 @@ public class TaskController implements Serializable {
      */
     @PostConstruct
     void init() {
-        tasks = taskBean.getByUser(user);
         selectedUser = user;
+        Date[] datePeriod = computePeriodDate();    //Sets the correct value in startDate and endDate: current week
+        tasks = taskBean.getByUserAndByPeriod(selectedUser, datePeriod[0], datePeriod[1]);
     }
 
     public List<Task> getTasks() {
@@ -167,5 +176,129 @@ public class TaskController implements Serializable {
 
     public void handleUserSelection() {
         tasks = taskBean.getByUser(selectedUser);
+    }
+
+    public int getPeriodToDisplay() {
+        return periodToDisplay;
+    }
+
+    public void setPeriodToDisplay(int periodToDisplay) {
+        this.periodToDisplay = periodToDisplay;
+    }
+
+    public void onPeriodToDisplayChange() {
+        Date[] datePeriod = computePeriodDate();
+        tasks = taskBean.getByUserAndByPeriod(selectedUser, datePeriod[0], datePeriod[1]);
+    }
+
+    /**
+     * This method handles the navigation in previous period of time.
+     */
+    public void onPrevPeriod() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(selectedDate);
+        switch (periodToDisplay) {
+            case PERIOD_DAY:
+                calendar.add(Calendar.DATE, -1);
+                selectedDate = calendar.getTime();
+                break;
+
+            case PERIOD_WEEK:
+                calendar.add(Calendar.WEEK_OF_YEAR, -1);
+                selectedDate = calendar.getTime();
+                break;
+
+            case PERIOD_MONTH:
+                calendar.add(Calendar.MONTH, -1);
+                selectedDate = calendar.getTime();
+                break;
+        }
+
+        Date[] datePeriod = computePeriodDate();
+        tasks = taskBean.getByUserAndByPeriod(selectedUser, datePeriod[0], datePeriod[1]);
+    }
+
+     /**
+     * This method handles the navigation in next period of time.
+     */
+    public void onNextPeriod() {
+         Calendar calendar = Calendar.getInstance();
+        calendar.setTime(selectedDate);
+        switch (periodToDisplay) {
+            case PERIOD_DAY:
+                calendar.add(Calendar.DATE, 1);
+                selectedDate = calendar.getTime();
+                break;
+
+            case PERIOD_WEEK:
+                calendar.add(Calendar.WEEK_OF_YEAR, 1);
+                selectedDate = calendar.getTime();
+                break;
+
+            case PERIOD_MONTH:
+                calendar.add(Calendar.MONTH, 1);
+                selectedDate = calendar.getTime();
+                break;
+        }
+
+        Date[] datePeriod = computePeriodDate();
+        tasks = taskBean.getByUserAndByPeriod(selectedUser, datePeriod[0], datePeriod[1]);
+    }
+
+    /**
+     * This method sets the date to today with the current period. For exampe, if the period is month, then the current month will be selected; if the period is
+     * week, then the current week will be selected.
+     */
+    public void onToday() {
+        selectedDate = new Date();
+        Date[] datePeriod = computePeriodDate();
+        tasks = taskBean.getByUserAndByPeriod(selectedUser, datePeriod[0], datePeriod[1]);
+    }
+
+    /**
+     * This method returns an array of 2 Date that corresponds to the period of the tasks to display. Position 0 contains the start Date and position 1 contains
+     * the end Date. These intervals are computed basing on the attribute selectedDate.
+     *
+     * @return
+     */
+    private Date[] computePeriodDate() {
+
+        Date[] datePeriod = new Date[2];
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(selectedDate);
+
+        switch (periodToDisplay) {
+            case PERIOD_DAY:
+                calendar.add(Calendar.DATE, -1);
+                datePeriod[0] = calendar.getTime();
+                calendar.add(Calendar.DATE, 1);
+                datePeriod[1] = calendar.getTime();
+                break;
+
+            case PERIOD_WEEK:
+                calendar.set(Calendar.DAY_OF_WEEK, calendar.getActualMinimum(Calendar.DAY_OF_WEEK));
+                calendar.add(Calendar.DATE, -1);
+                datePeriod[0] = calendar.getTime();
+
+                calendar.setTime(selectedDate);
+                calendar.set(Calendar.DAY_OF_WEEK, calendar.getActualMaximum(Calendar.DAY_OF_WEEK));
+                datePeriod[1] = calendar.getTime();
+                break;
+
+            case PERIOD_MONTH:
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.add(Calendar.DATE, -1);
+                datePeriod[0] = calendar.getTime();
+
+                calendar.setTime(selectedDate);
+                calendar.add(Calendar.MONTH, 1);
+                calendar.set(Calendar.DATE, 1);
+                calendar.add(Calendar.DATE, -1);              
+                datePeriod[1] = calendar.getTime();
+                break;
+        }
+
+        return datePeriod;
     }
 }
