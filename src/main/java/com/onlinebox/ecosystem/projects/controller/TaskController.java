@@ -5,7 +5,9 @@ import com.onlinebox.ecosystem.employees.entity.User;
 import com.onlinebox.ecosystem.projects.bean.TaskManagerBean;
 import com.onlinebox.ecosystem.projects.bean.TaskTypeManagerBean;
 import com.onlinebox.ecosystem.projects.entity.Task;
+import com.onlinebox.ecosystem.util.DateHelper;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -52,6 +54,7 @@ public class TaskController implements Serializable {
         task = new Task();
         task.setTaskDate(new Date());
         periodToDisplay = PERIOD_WEEK;
+
         selectedDate = new Date();
     }
 
@@ -174,14 +177,25 @@ public class TaskController implements Serializable {
         this.selectedUser = selectedUser;
     }
 
-    public void handleUserSelection() {
+    /**
+     * This method handles the users filter.
+     */
+    public void filterByUser() {
         tasks = taskBean.getByUser(selectedUser);
     }
 
+    /**
+     * Getter that returns the choosen period (day, week, or month)
+     * @return 
+     */
     public int getPeriodToDisplay() {
         return periodToDisplay;
     }
 
+    /**
+     * Setter that allow to set the modification of the period when user chosse day, week or month
+     * @param periodToDisplay 
+     */
     public void setPeriodToDisplay(int periodToDisplay) {
         this.periodToDisplay = periodToDisplay;
     }
@@ -218,11 +232,11 @@ public class TaskController implements Serializable {
         tasks = taskBean.getByUserAndByPeriod(selectedUser, datePeriod[0], datePeriod[1]);
     }
 
-     /**
+    /**
      * This method handles the navigation in next period of time.
      */
     public void onNextPeriod() {
-         Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(selectedDate);
         switch (periodToDisplay) {
             case PERIOD_DAY:
@@ -250,6 +264,7 @@ public class TaskController implements Serializable {
      * week, then the current week will be selected.
      */
     public void onToday() {
+
         selectedDate = new Date();
         Date[] datePeriod = computePeriodDate();
         tasks = taskBean.getByUserAndByPeriod(selectedUser, datePeriod[0], datePeriod[1]);
@@ -265,40 +280,66 @@ public class TaskController implements Serializable {
 
         Date[] datePeriod = new Date[2];
 
+        switch (periodToDisplay) {
+            case PERIOD_DAY:
+                datePeriod[0] = DateHelper.getMinHour(selectedDate);
+                datePeriod[1] = DateHelper.getMaxHour(selectedDate);
+                break;
+
+            case PERIOD_WEEK:              
+                datePeriod[0] = DateHelper.getFirstDayOfWeek(selectedDate);
+                datePeriod[1] = DateHelper.getLastDayOfWeek(selectedDate);         
+                break;
+
+            case PERIOD_MONTH:
+                datePeriod[0] = DateHelper.getFirstDayOfMonth(selectedDate);
+                datePeriod[1] = DateHelper.getLastDayOfMonth(selectedDate);
+                break;
+        }
+
+        return datePeriod;
+    }
+    
+    /**
+     * This method returns the chosen date interval in a understanble format.
+     * @return 
+     */
+    public String getNavigationPeriod() {
+        String dateToString = "";
+        Date[] datePeriod = computePeriodDate();
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(selectedDate);
 
         switch (periodToDisplay) {
             case PERIOD_DAY:
-                calendar.add(Calendar.DATE, -1);
-                datePeriod[0] = calendar.getTime();
-                calendar.add(Calendar.DATE, 1);
-                datePeriod[1] = calendar.getTime();
+                dateToString = new SimpleDateFormat("EEEE").format(selectedDate) + ", " + calendar.get(Calendar.DATE) + " " + new SimpleDateFormat("MMMM").format(selectedDate) + " " + calendar.get(Calendar.YEAR);
                 break;
 
             case PERIOD_WEEK:
-                calendar.set(Calendar.DAY_OF_WEEK, calendar.getActualMinimum(Calendar.DAY_OF_WEEK));
-                calendar.add(Calendar.DATE, -1);
-                datePeriod[0] = calendar.getTime();
+                Calendar calStart = Calendar.getInstance();
+                calStart.setTime(datePeriod[0]); //Set start of week
 
-                calendar.setTime(selectedDate);
-                calendar.set(Calendar.DAY_OF_WEEK, calendar.getActualMaximum(Calendar.DAY_OF_WEEK));
-                datePeriod[1] = calendar.getTime();
+                Calendar calEnd = Calendar.getInstance();
+                calEnd.setTime(datePeriod[1]); //Set end of week
+
+                if (calStart.get(Calendar.YEAR) != calEnd.get(Calendar.YEAR)) {
+                    dateToString = calStart.get(Calendar.DATE) + " " + new SimpleDateFormat("MMMM").format(datePeriod[0]) + " " + calStart.get(Calendar.YEAR) + " - " + calEnd.get(Calendar.DATE) + " " + new SimpleDateFormat("MMMM").format(datePeriod[1]) + " " + calEnd.get(Calendar.YEAR);
+                } else {
+                    if (calStart.get(Calendar.MONTH) != calEnd.get(Calendar.MONTH)) {
+                        dateToString = calStart.get(Calendar.DATE) + " " + new SimpleDateFormat("MMMM").format(datePeriod[0]) + " - " + calEnd.get(Calendar.DATE) + " " + new SimpleDateFormat("MMMM").format(datePeriod[1]) + " " + calEnd.get(Calendar.YEAR);
+                    } else {
+                        dateToString = calStart.get(Calendar.DATE) + " - " + calEnd.get(Calendar.DATE) + " " + new SimpleDateFormat("MMMM").format(datePeriod[1]) + " " + calEnd.get(Calendar.YEAR);
+
+                    }
+                }
+
                 break;
 
             case PERIOD_MONTH:
-                calendar.set(Calendar.DAY_OF_MONTH, 1);
-                calendar.add(Calendar.DATE, -1);
-                datePeriod[0] = calendar.getTime();
-
-                calendar.setTime(selectedDate);
-                calendar.add(Calendar.MONTH, 1);
-                calendar.set(Calendar.DATE, 1);
-                calendar.add(Calendar.DATE, -1);              
-                datePeriod[1] = calendar.getTime();
+                dateToString = new SimpleDateFormat("MMMM").format(selectedDate) + " " + calendar.get(Calendar.YEAR);
                 break;
         }
-
-        return datePeriod;
+        return dateToString;
     }
 }

@@ -38,7 +38,7 @@ public class UserSessionController implements Serializable {
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         String username = context.getUserPrincipal().getName();
         user = userBean.getByUsername(username);
-        
+
         user.setLastLogin(new Date());
         try {
             user = userBean.update(user);
@@ -46,7 +46,7 @@ public class UserSessionController implements Serializable {
             //Should never have problem here.
             Logger.getLogger(UserSessionController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     public User getUser() {
@@ -68,5 +68,4 @@ public class UserSessionController implements Serializable {
         return "dashboard_view.xhtml?faces-redirect=true";
 
     }
-    
 }
