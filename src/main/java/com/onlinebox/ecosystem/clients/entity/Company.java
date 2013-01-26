@@ -207,6 +207,9 @@ public class Company implements IEntity, Serializable, Comparable<Company> {
 
     @Override
     public int compareTo(Company o) {
+        if(this.getName() == null) {
+            return -1;
+        }
         return this.getName().compareToIgnoreCase(o.getName());
     }
 }
