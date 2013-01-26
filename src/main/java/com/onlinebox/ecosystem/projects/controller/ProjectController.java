@@ -9,6 +9,7 @@ import com.onlinebox.ecosystem.projects.entity.Task;
 import com.onlinebox.ecosystem.util.entity.IEntity;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -122,6 +123,7 @@ public class ProjectController implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, msg);
         } else {
             isOk = true;
+            Collections.sort(projects);
             this.resetProject();
         }
         context.addCallbackParam("isOk", isOk);

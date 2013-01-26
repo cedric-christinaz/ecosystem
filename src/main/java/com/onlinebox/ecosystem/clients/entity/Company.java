@@ -12,7 +12,7 @@ import javax.persistence.*;
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
 @javax.persistence.Table(name = "t_company")
-public class Company implements IEntity, Serializable {
+public class Company implements IEntity, Serializable, Comparable<Company> {
 
     @javax.persistence.OneToMany(mappedBy = "company", cascade = {CascadeType.ALL})
     @javax.persistence.JoinColumn(name = "t_companyId", referencedColumnName = "Id", nullable = false)
@@ -203,5 +203,10 @@ public class Company implements IEntity, Serializable {
 
     public void setPostalBox(String postalBox) {
         this.postalBox = postalBox;
+    }
+
+    @Override
+    public int compareTo(Company o) {
+        return this.getName().compareToIgnoreCase(o.getName());
     }
 }

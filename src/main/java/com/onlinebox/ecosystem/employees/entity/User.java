@@ -16,7 +16,7 @@ import javax.persistence.*;
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
 @javax.persistence.Table(name="t_user")
-public class User implements IEntity, Serializable {
+public class User implements IEntity, Serializable, Comparable<User> {
 
     @javax.persistence.OneToOne(optional = false)
     @javax.persistence.JoinColumn(name = "t_user_jobId", referencedColumnName = "Id", nullable = false)
@@ -273,6 +273,11 @@ public class User implements IEntity, Serializable {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int compareTo(User o) {
+        return (this.getLastname()+this.getFirstname()).compareToIgnoreCase((o.getLastname()+o.getFirstname()));
     }
     
     

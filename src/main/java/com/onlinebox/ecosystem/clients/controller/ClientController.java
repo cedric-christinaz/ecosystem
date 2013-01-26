@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -141,6 +142,7 @@ public class ClientController implements Serializable{
             FacesContext.getCurrentInstance().addMessage(null, msg);
         } else {
             isOk = true;
+            Collections.sort(companies);
             this.resetCompany();
             this.resetCompanyDetailsDialog();
         }

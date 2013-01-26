@@ -17,7 +17,7 @@ import javax.persistence.NamedQuery;
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
 @javax.persistence.Table(name = "t_project")
-public class Project implements IEntity, Serializable {
+public class Project implements IEntity, Serializable, Comparable<Project> {
 
     @javax.persistence.ManyToOne(optional = false)
     @javax.persistence.JoinColumn(name = "t_companyId", referencedColumnName = "Id", nullable = false)
@@ -160,6 +160,11 @@ public class Project implements IEntity, Serializable {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int compareTo(Project o) {
+        return this.getName().compareToIgnoreCase(o.getName());
     }
     
     
