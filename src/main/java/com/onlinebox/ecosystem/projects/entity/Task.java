@@ -3,6 +3,7 @@ package com.onlinebox.ecosystem.projects.entity;
 import com.onlinebox.ecosystem.employees.entity.*;
 import com.onlinebox.ecosystem.util.entity.*;
 import java.io.*;
+import javax.persistence.GenerationType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
@@ -22,6 +23,7 @@ public class Task implements IEntity, Serializable {
     @javax.persistence.JoinColumn(name = "t_task_typeId", referencedColumnName = "Id", nullable = false)
     private TaskType taskType;
     @javax.persistence.Id
+    @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
     @javax.persistence.Column(name = "Id", nullable = false, length = 20)
     private long id;
 	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)

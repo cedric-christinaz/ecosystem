@@ -7,20 +7,20 @@ import javax.persistence.*;
 @NamedQuery(name = "UserJob.findAll", query = "select j from UserJob j ORDER BY j.name")
 @javax.persistence.EntityListeners(com.onlinebox.ecosystem.util.entity.DateUpdateListener.class)
 @javax.persistence.Entity
-@javax.persistence.Table(name="t_user_job")
-public class UserJob implements IEntity, Serializable {
+@javax.persistence.Table(name = "t_user_job")
+public class UserJob implements IEntity, Serializable, Comparable<UserJob> {
 
     @javax.persistence.Id
     @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
     @javax.persistence.Column(name = "Id", nullable = false, length = 19)
     private long id;
-    @javax.persistence.Column(name="Name", unique=true, nullable=false, length=60)
+    @javax.persistence.Column(name = "Name", unique = true, nullable = false, length = 60)
     private String name;
-	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-	@javax.persistence.Column(name="CreateDate", nullable=false)
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @javax.persistence.Column(name = "CreateDate", nullable = false)
     private java.util.Date createDate;
-	@javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
-	@javax.persistence.Column(name="LastUpdateDate", nullable=false)
+    @javax.persistence.Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @javax.persistence.Column(name = "LastUpdateDate", nullable = false)
     private java.util.Date lastUpdateDate;
 
     @Override
@@ -59,5 +59,13 @@ public class UserJob implements IEntity, Serializable {
     @Override
     public void setLastUpdateDate(java.util.Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    @Override
+    public int compareTo(UserJob o) {
+        if (this.getName() == null) {
+            return -1;
+        }
+        return this.getName().compareToIgnoreCase(o.getName());
     }
 }

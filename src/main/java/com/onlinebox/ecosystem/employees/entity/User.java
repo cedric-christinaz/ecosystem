@@ -277,6 +277,9 @@ public class User implements IEntity, Serializable, Comparable<User> {
 
     @Override
     public int compareTo(User o) {
+         if(this.getLastname() == null || this.getFirstname() == null) {
+            return -1;
+        }
         return (this.getLastname()+this.getFirstname()).compareToIgnoreCase((o.getLastname()+o.getFirstname()));
     }
     

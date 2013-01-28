@@ -4,6 +4,7 @@ import com.onlinebox.ecosystem.clients.entity.*;
 import com.onlinebox.ecosystem.util.entity.*;
 import java.io.*;
 import java.util.*;
+import javax.persistence.GenerationType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
@@ -26,6 +27,7 @@ public class Project implements IEntity, Serializable, Comparable<Project> {
     @javax.persistence.JoinColumn(name = "t_projectId", referencedColumnName = "Id", nullable = false)
     private List<Task> tasks;
     @javax.persistence.Id
+    @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY)
     @javax.persistence.Column(name = "Id", nullable = false, length = 20)
     private long id;
     @javax.persistence.Column(name = "Name", nullable = false, length = 150)
@@ -164,6 +166,9 @@ public class Project implements IEntity, Serializable, Comparable<Project> {
 
     @Override
     public int compareTo(Project o) {
+        if(this.getName() == null) {
+            return -1;
+        }
         return this.getName().compareToIgnoreCase(o.getName());
     }
     

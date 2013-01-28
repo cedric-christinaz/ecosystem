@@ -4,6 +4,7 @@ package com.onlinebox.ecosystem.projects.controller;
 import com.onlinebox.ecosystem.projects.bean.TaskTypeManagerBean;
 import com.onlinebox.ecosystem.projects.entity.TaskType;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -86,6 +87,7 @@ public class TaskTypeController implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, msg);
         } else {
             isOk = true;
+            Collections.sort(taskTypes);
             this.resetTaskType();
         }
         context.addCallbackParam("isOk", isOk);

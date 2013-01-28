@@ -3,6 +3,7 @@ package com.onlinebox.ecosystem.employees.controller;
 import com.onlinebox.ecosystem.employees.bean.UserJobManagerBean;
 import com.onlinebox.ecosystem.employees.entity.UserJob;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,6 +73,7 @@ public class UserJobController implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, msg);
         } else {
             isOk = true;
+            Collections.sort(userJobs);
             this.resetUserJob();
         }
         context.addCallbackParam("isOk", isOk);

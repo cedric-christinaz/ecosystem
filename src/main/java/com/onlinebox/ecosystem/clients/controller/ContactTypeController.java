@@ -3,6 +3,7 @@ package com.onlinebox.ecosystem.clients.controller;
 import com.onlinebox.ecosystem.clients.bean.ContactTypeManagerBean;
 import com.onlinebox.ecosystem.clients.entity.ContactType;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -81,6 +82,7 @@ public class ContactTypeController implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, msg);
         } else {
             isOk = true;
+            Collections.sort(contactTypes);
             this.resetContactType();
         }
         context.addCallbackParam("isOk", isOk);

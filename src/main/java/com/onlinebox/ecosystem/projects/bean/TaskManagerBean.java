@@ -26,9 +26,10 @@ public class TaskManagerBean {
              
         Project project = em.find(Project.class, task.getProject().getId());
         project.getTasks().add(task);
+           
+        em.persist(task);
         em.merge(project);
         
-        em.persist(task);
         return task;
     }
 
@@ -44,9 +45,15 @@ public class TaskManagerBean {
      *
      * @param task
      */
-    public void delete(Task task) {
+    public void delete(Task task) {  
         Task toDelete = em.merge(task);
+        
+        Project project = em.find(Project.class, task.getProject().getId());
+        project.getTasks().remove(task);
+                  
+        em.merge(project);
         em.remove(toDelete);
+  
     }
 
     /**
